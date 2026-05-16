@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CS Tuition Thank You Stories</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#student">
+        <img class="brand-logo" src="cs-tuition-logo-outline.png" alt="CS Tuition Centre" />
+        <span>
+          <strong>Teacher Appreciation Portal</strong>
+          <small>Teacher Appreciation Stories</small>
+        </span>
+      </a>
+      <nav class="nav-tabs" aria-label="Main views">
+        <button class="tab-button active" data-view="student" type="button">Student Upload</button>
+        <button class="tab-button" data-view="leaderboard" type="button">Leaderboard</button>
+        <button class="tab-button" data-view="admin" type="button">Admin Log In</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="student" class="view active">
+        <div class="hero-band">
+          <div class="hero-copy">
+            <p class="eyebrow">FOR STUDENTS &amp; FAMILIES</p>
+            <h1>Thank the Teacher Who Changed Your Life.</h1>
+            <p>
+              Share your appreciation video, heartfelt message, or meaningful story with the
+              teachers who supported your journey at CS Tuition.
+            </p>
+            <p>
+              Selected stories may be featured in future CS Tuition celebrations and campaigns.
+            </p>
+          </div>
+          <div class="story-preview" aria-label="Appreciation wall preview">
+            <div class="preview-card lifted">
+              <span class="quote-mark">"</span>
+              <p>Thank you Teacher BOBO for making BM easier to understand and for never giving up on me.</p>
+              <strong>Tan Kang Ming · FORM 5</strong>
+            </div>
+            <div class="preview-card">
+              <span class="quote-mark">"</span>
+              <p>CS Tuition helped me become more confident before exams. Thank you Ms Ong for your patience and guidance.</p>
+              <strong>Chong Xin Yin · FORM 3</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel submit-panel" aria-labelledby="form-title">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Submit your story</p>
+                <h2 id="form-title">Student Appreciation Upload</h2>
+              </div>
+              <span class="status-pill">Video or text</span>
+            </div>
+
+            <form id="story-form">
+              <div class="field-grid">
+                <label>
+                  Student name
+                  <input name="studentName" type="text" placeholder="e.g. Tan Mei Xin" required />
+                </label>
+                <label>
+                  Grade / Level
+                  <select id="grade-select" name="grade" required>
+                    <option value="">Choose grade / level</option>
+                  </select>
+                </label>
+                <label class="wide">
+                  School
+                  <input name="school" type="text" placeholder="e.g. SMK Seri Mutiara" required />
+                </label>
+              </div>
+
+              <fieldset class="choice-field">
+                <legend>Teacher(s) you want to thank</legend>
+                <div class="teacher-options" id="teacher-options"></div>
+                <p class="field-help">You can choose one or more teachers.</p>
+              </fieldset>
+
+              <label>
+                Your story / appreciation message
+                <textarea
+                  name="story"
+                  rows="7"
+                  placeholder="Share what your teacher did, what changed for you, and what you want to say to them."
+                ></textarea>
+              </label>
+
+              <label class="upload-box" for="video-file">
+                <input id="video-file" name="video" type="file" accept="video/*" />
+                <span class="upload-icon" aria-hidden="true"></span>
+                <strong>Upload a video</strong>
+                <small>MP4, MOV, or any phone video format. Text-only stories are welcome too.</small>
+                <em id="file-name">No video selected</em>
+              </label>
+
+              <label class="consent-row">
+                <input name="consent" type="checkbox" required />
+                <span>
+                  I agree that CS Tuition may review, edit, and use this video or story for teacher
+                  appreciation and marketing materials.
+                </span>
+              </label>
+
+              <div class="form-actions">
+                <button class="primary-button" type="submit">Submit Story</button>
+                <button class="ghost-button" id="clear-form" type="button">Clear</button>
+              </div>
+              <p class="form-note" id="form-note" role="status"></p>
+            </form>
+          </section>
+
+          <aside class="panel leaderboard-panel" aria-labelledby="mini-leaderboard-title">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Live ranking</p>
+                <h2 id="mini-leaderboard-title">Most Thanked Teachers</h2>
+              </div>
+            </div>
+            <ol class="leaderboard-list" id="leaderboard-mini"></ol>
+          </aside>
+        </div>
+      </section>
+
+      <section id="leaderboard" class="view">
+        <div class="section-heading">
+          <p class="eyebrow">Teacher appreciation leaderboard</p>
+          <h1>See which teachers students are thanking most.</h1>
+        </div>
+        <div class="leaderboard-stage">
+          <ol class="leaderboard-list large" id="leaderboard-full"></ol>
+        </div>
+      </section>
+
+      <section id="admin" class="view">
+        <section class="admin-login-panel" id="admin-login-panel" aria-labelledby="admin-login-title">
+          <div>
+            <p class="eyebrow">Restricted access</p>
+            <h1 id="admin-login-title">Admin login required.</h1>
+            <p>Only authorised CS Tuition team members can view or download submitted素材.</p>
+          </div>
+          <form class="admin-login-form" id="admin-login-form">
+            <label>
+              Admin password
+              <input id="admin-password" type="password" autocomplete="current-password" required />
+            </label>
+            <button class="primary-button" type="submit">Unlock Admin</button>
+            <p class="form-note" id="admin-login-note" role="status"></p>
+          </form>
+        </section>
+
+        <div class="admin-content locked" id="admin-content" aria-hidden="true">
+          <div class="section-heading admin-heading">
+            <div>
+              <p class="eyebrow">Internal use</p>
+              <h1>Download submitted marketing素材.</h1>
+            </div>
+            <div class="admin-actions">
+              <button class="ghost-button" id="export-csv" type="button">Download CSV</button>
+              <button class="ghost-button" id="export-json" type="button">Download JSON</button>
+              <button class="ghost-button" id="download-all-videos" type="button">Download All Videos</button>
+              <button class="ghost-button" id="admin-logout" type="button">Log Out</button>
+              <button class="danger-button" id="clear-all" type="button">Clear All</button>
+            </div>
+          </div>
+
+          <section class="admin-filter-panel" aria-label="Download filters and Drive sync">
+            <div class="date-filters">
+              <label>
+                From date
+                <input id="filter-from" type="date" />
+              </label>
+              <label>
+                To date
+                <input id="filter-to" type="date" />
+              </label>
+              <button class="ghost-button" id="clear-filters" type="button">Clear Filter</button>
+            </div>
+            <div class="drive-status">
+              <strong>Google Drive collection folder</strong>
+              <a
+                href="https://drive.google.com/drive/folders/1r20GuBnI0dxaC3n7ac3bCwkwTiCgaEnP?usp=sharing"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open Drive Folder
+              </a>
+              <small id="drive-sync-note">
+                Auto-sync is ready for backend connection. Add a Google Apps Script or server endpoint in app.js.
+              </small>
+            </div>
+          </section>
+
+          <section class="settings-panel" aria-labelledby="settings-title">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Form settings</p>
+                <h2 id="settings-title">Grade / Level and Teacher Options</h2>
+              </div>
+            </div>
+            <div class="settings-grid">
+              <div class="settings-card">
+                <h3>Grade / Level</h3>
+                <form class="option-form" id="grade-option-form">
+                  <input id="new-grade-option" type="text" placeholder="Add new grade / level" />
+                  <button class="ghost-button" type="submit">Add</button>
+                </form>
+                <div class="option-list" id="grade-option-list"></div>
+              </div>
+              <div class="settings-card">
+                <h3>Teacher Names</h3>
+                <form class="option-form" id="teacher-option-form">
+                  <input id="new-teacher-option" type="text" placeholder="Add new teacher name" />
+                  <button class="ghost-button" type="submit">Add</button>
+                </form>
+                <div class="option-list" id="teacher-option-list"></div>
+              </div>
+            </div>
+          </section>
+
+          <div class="metrics-row">
+            <div class="metric">
+              <span id="metric-submissions">0</span>
+              <small>Submissions</small>
+            </div>
+            <div class="metric">
+              <span id="metric-videos">0</span>
+              <small>Videos</small>
+            </div>
+            <div class="metric">
+              <span id="metric-teachers">0</span>
+              <small>Teachers thanked</small>
+            </div>
+          </div>
+
+          <div class="submissions-table-wrap">
+            <table class="submissions-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Grade</th>
+                  <th>School</th>
+                  <th>Teacher(s)</th>
+                  <th>Story</th>
+                  <th>Video</th>
+                </tr>
+              </thead>
+              <tbody id="submission-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="empty-state-template">
+      <li class="empty-state">No submissions yet. The leaderboard will update after students submit.</li>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
