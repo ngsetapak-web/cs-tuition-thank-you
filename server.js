@@ -4,7 +4,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const PORT = Number(process.env.PORT || 4173);
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "CSTuitionAdmin2026!";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 const ADMIN_COOKIE = "cs_tuition_admin";
 const SUPABASE_URL = stripTrailingSlash(process.env.SUPABASE_URL || "");
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
@@ -76,6 +76,10 @@ const MIME_TYPES = {
   ".js": "application/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".md": "text/markdown; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
 };
 const adminSessions = new Set();
 
@@ -96,6 +100,10 @@ const server = http.createServer(async (req, res) => {
 
     if (url.pathname === "/api/admin/login" && req.method === "POST") {
       const payload = await readJsonBody(req);
+      if (!ADMIN_PASSWORD) {
+        sendJson(res, { ok: false, error: "Admin password is not configured" }, 500);
+        return;
+      }
       if (payload.password !== ADMIN_PASSWORD) {
         sendJson(res, { ok: false, error: "Invalid password" }, 401);
         return;
@@ -324,7 +332,7 @@ async function saveCloudinaryVideo(video, submission) {
   form.append("public_id", submission.id);
   form.append("signature", signature);
 
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`, {
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
     method: "POST",
     body: form,
   });

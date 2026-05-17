@@ -65,8 +65,18 @@ let serverMode = false;
 
 const els = {
   tabs: document.querySelectorAll(".tab-button"),
+  viewButtons: document.querySelectorAll("[data-view]"),
   views: document.querySelectorAll(".view"),
+  menuToggle: document.querySelector("#menu-toggle"),
+  mainNav: document.querySelector("#main-nav"),
   form: document.querySelector("#story-form"),
+  formSteps: document.querySelectorAll(".form-step"),
+  formNextButtons: document.querySelectorAll(".form-next"),
+  formBackButtons: document.querySelectorAll(".form-back"),
+  formProgress: document.querySelector("#form-progress"),
+  mobileProgress: document.querySelector("#mobile-progress"),
+  reviewCard: document.querySelector("#review-card"),
+  submitStoryButton: document.querySelector("#submit-story-button"),
   gradeSelect: document.querySelector("#grade-select"),
   teacherOptions: document.querySelector("#teacher-options"),
   fileInput: document.querySelector("#video-file"),
@@ -101,6 +111,8 @@ const els = {
   metricTeachers: document.querySelector("#metric-teachers"),
   emptyTemplate: document.querySelector("#empty-state-template"),
 };
+
+let currentFormStep = 0;
 
 function loadOptions(storageKey, defaults) {
   const saved = localStorage.getItem(storageKey);
@@ -224,6 +236,7 @@ function renderOptionControls() {
 }
 
 function renderGradeSelect() {
+  if (!els.gradeSelect) return;
   const currentValue = els.gradeSelect.value;
   els.gradeSelect.innerHTML = `<option value="">Choose grade / level</option>`;
   gradeOptions.forEach((grade) => {
@@ -238,6 +251,7 @@ function renderGradeSelect() {
 }
 
 function renderTeacherChoices() {
+  if (!els.teacherOptions) return;
   const selected = new Set(
     [...els.teacherOptions.querySelectorAll("input:checked")].map((input) => input.value),
   );
@@ -255,6 +269,7 @@ function renderTeacherChoices() {
 }
 
 function renderAdminOptionList(type, options, target) {
+  if (!target) return;
   target.innerHTML = "";
   options.forEach((option, index) => {
     const item = document.createElement("span");
@@ -301,6 +316,7 @@ function setAdminUnlocked(isUnlocked) {
 }
 
 function renderAdminAccess() {
+  if (!els.adminLoginPanel || !els.adminContent) return;
   const isUnlocked = isAdminUnlocked();
   els.adminLoginPanel.classList.toggle("locked", isUnlocked);
   els.adminContent.classList.toggle("locked", !isUnlocked);
@@ -510,6 +526,7 @@ function renderLeaderboard(target, limit) {
 }
 
 function renderAdmin() {
+  if (!els.rows) return;
   if (!isAdminUnlocked()) {
     return;
   }
@@ -548,17 +565,17 @@ function renderAdmin() {
 }
 
 function renderVideoDownload(submission) {
-  if (!submission.video) return `<span>No video</span>`;
+  if (!submission.video) return `<span>No file</span>`;
   return `
     <button class="download-link" type="button" data-download-video="${submission.id}">
-      Download Video
+      Download File
     </button>
   `;
 }
 
 function renderAll() {
-  renderLeaderboard(els.leaderboardMini, 5);
-  renderLeaderboard(els.leaderboardFull);
+  if (els.leaderboardMini) renderLeaderboard(els.leaderboardMini, 5);
+  if (els.leaderboardFull) renderLeaderboard(els.leaderboardFull);
   renderAdmin();
 }
 
@@ -760,27 +777,153 @@ function activateView(view) {
   els.tabs.forEach((item) => item.classList.toggle("active", item === matchingTab));
   els.views.forEach((item) => item.classList.toggle("active", item.id === view));
   window.location.hash = view;
+  els.mainNav?.classList.remove("open");
+  els.menuToggle?.setAttribute("aria-expanded", "false");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-els.tabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    activateView(tab.dataset.view);
-  });
-});
-
-document.querySelectorAll(".story-wall-trigger[data-view]").forEach((button) => {
+els.viewButtons.forEach((button) => {
   button.addEventListener("click", () => {
     activateView(button.dataset.view);
   });
 });
 
-els.fileInput.addEventListener("change", () => {
-  els.fileName.textContent = els.fileInput.files[0]?.name || "No video selected";
+els.menuToggle?.addEventListener("click", () => {
+  const isOpen = els.mainNav.classList.toggle("open");
+  els.menuToggle.setAttribute("aria-expanded", String(isOpen));
 });
 
-els.clearForm.addEventListener("click", () => {
+function showFormStep(step) {
+  currentFormStep = Math.max(0, Math.min(step, els.formSteps.length - 1));
+  els.formSteps.forEach((item, index) => {
+    item.classList.toggle("active", index === currentFormStep);
+  });
+
+  const progressIndex = currentFormStep <= 2
+    ? 0
+    : currentFormStep === 3
+      ? 2
+      : currentFormStep === 4
+        ? 0
+        : currentFormStep === 5
+          ? 3
+          : 4;
+
+  els.formProgress?.querySelectorAll("li").forEach((item, index) => {
+    item.classList.toggle("active", index === progressIndex);
+  });
+
+  if (els.mobileProgress) {
+    els.mobileProgress.textContent = `Step ${Math.min(currentFormStep + 1, 5)} of 5`;
+  }
+
+  if (currentFormStep === els.formSteps.length - 1) {
+    renderReview();
+  }
+
+  updateSubmitButton();
+}
+
+function getCurrentStepFields() {
+  const currentStep = els.formSteps[currentFormStep];
+  return currentStep ? [...currentStep.querySelectorAll("input, textarea, select")] : [];
+}
+
+function validateCurrentStep() {
+  const fields = getCurrentStepFields().filter((field) => field.required);
+  for (const field of fields) {
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      return false;
+    }
+  }
+
+  if (currentFormStep === 3 && !getSelectedTeachers().length) {
+    window.alert("Please choose at least one teacher.");
+    return false;
+  }
+
+  return true;
+}
+
+function getSelectedTeachers() {
+  return els.form ? new FormData(els.form).getAll("teachers").map(normalizeOption).filter(Boolean) : [];
+}
+
+function buildStoryText(data) {
+  return [
+    `Student phone: ${String(data.get("studentPhone") || "").trim()}`,
+    `Student email: ${String(data.get("studentEmail") || "").trim()}`,
+    `Subject: ${String(data.get("subject") || "").trim()}`,
+    "",
+    "Before meeting this teacher:",
+    String(data.get("storyBefore") || "").trim(),
+    "",
+    "Impact moment:",
+    String(data.get("impactMoment") || "").trim(),
+    "",
+    "What changed after that:",
+    String(data.get("personalChange") || "").trim(),
+    "",
+    "Message to teacher:",
+    String(data.get("teacherMessage") || "").trim(),
+  ].join("\n");
+}
+
+function renderReview() {
+  if (!els.reviewCard || !els.form) return;
+  const data = new FormData(els.form);
+  const teachers = getSelectedTeachers();
+  const fileName = els.fileInput?.files[0]?.name || "No file uploaded";
+
+  els.reviewCard.innerHTML = `
+    <div class="review-meta">
+      <span>Student: ${escapeHtml(data.get("studentName") || "-")}</span>
+      <span>Teacher: ${escapeHtml(teachers.join(", ") || "-")}</span>
+      <span>Year / Form: ${escapeHtml(data.get("grade") || "-")}</span>
+      <span>Subject: ${escapeHtml(data.get("subject") || "-")}</span>
+      <span>Email: ${escapeHtml(data.get("studentEmail") || "-")}</span>
+      <span>Upload: ${escapeHtml(fileName)}</span>
+    </div>
+    <div>
+      <h3>Student story preview</h3>
+      <p>${escapeHtml(buildStoryText(data))}</p>
+    </div>
+  `;
+}
+
+function updateSubmitButton() {
+  if (!els.submitStoryButton || !els.form) return;
+  const consent = els.form.elements.consent;
+  els.submitStoryButton.disabled = !consent?.checked;
+}
+
+els.formNextButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!validateCurrentStep()) return;
+    showFormStep(currentFormStep + 1);
+  });
+});
+
+els.formBackButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    showFormStep(currentFormStep - 1);
+  });
+});
+
+els.form?.addEventListener("input", () => {
+  updateSubmitButton();
+  if (currentFormStep === els.formSteps.length - 1) renderReview();
+});
+
+els.fileInput.addEventListener("change", () => {
+  els.fileName.textContent = els.fileInput.files[0]?.name || "No file selected";
+  updateSubmitButton();
+});
+
+els.clearForm?.addEventListener("click", () => {
   els.form.reset();
-  els.fileName.textContent = "No video selected";
+  els.fileName.textContent = "No file selected";
   els.formNote.textContent = "";
 });
 
@@ -846,12 +989,12 @@ els.adminLogout.addEventListener("click", async () => {
 els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(els.form);
-  const story = String(data.get("story") || "").trim();
+  const story = buildStoryText(data);
   const videoFile = data.get("video");
-  const teachers = data.getAll("teachers").map(normalizeOption).filter(Boolean);
+  const teachers = getSelectedTeachers();
 
-  if (!story && (!videoFile || !videoFile.size)) {
-    els.formNote.textContent = "Please upload a video or write a story before submitting.";
+  if (!data.get("consent")) {
+    els.formNote.textContent = "Please tick the consent checkbox before submitting.";
     return;
   }
 
@@ -899,13 +1042,15 @@ els.form.addEventListener("submit", async (event) => {
   }
 
   els.form.reset();
-  els.fileName.textContent = "No video selected";
+  els.fileName.textContent = "No file selected";
+  showFormStep(0);
   if (serverMode) {
     els.formNote.innerHTML = `<span class="success">Submitted. The leaderboard is now updated for everyone.</span>`;
   } else if (!DRIVE_UPLOAD_ENDPOINT) {
     els.formNote.innerHTML = `<span class="success">Submitted locally. This browser-only mode will not update other devices.</span>`;
   }
   await refresh();
+  activateView("thank-you");
 });
 
 els.rows.addEventListener("click", (event) => {

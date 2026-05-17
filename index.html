@@ -7,193 +7,330 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="#student">
+    <header class="site-header">
+      <a class="brand" href="#student" aria-label="CS Tuition Centre home">
         <img class="brand-logo" src="cs-tuition-logo-outline.png" alt="CS Tuition Centre" />
-        <span>
-          <strong>Because of You Project</strong>
-          <small>Teacher Appreciation Stories</small>
-        </span>
+        <span>CS Tuition Centre</span>
       </a>
-      <nav class="nav-tabs" aria-label="Main views">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="main-nav" id="main-nav" aria-label="Main navigation">
         <button class="tab-button active" data-view="student" type="button">Home</button>
         <button class="tab-button" data-view="leaderboard" type="button">Stories Wall</button>
         <a class="nav-link" href="#about-project">About</a>
-        <a class="nav-cta" href="#submit-story">Share Your Story</a>
+        <button class="nav-cta" data-view="share" type="button">Share Your Story</button>
         <button class="tab-button admin-tab" data-view="admin" type="button">Admin</button>
       </nav>
     </header>
 
     <main>
       <section id="student" class="view active">
-        <div class="hero-band">
+        <section class="home-hero" aria-labelledby="home-title">
           <div class="hero-copy">
-            <p class="eyebrow">FOR STUDENTS &amp; FAMILIES</p>
-            <h1><span>Because of You</span><em>Project</em></h1>
-            <p class="hero-subtitle">
-              Honouring the teachers who quietly changed lives.
-            </p>
-            <p>
-              Share your appreciation video, heartfelt message, or meaningful story with the
-              teachers who supported your journey at CS Tuition. Selected stories may be featured
-              in future CS Tuition celebrations and campaigns.
+            <p class="eyebrow">Teacher's Day Appreciation</p>
+            <h1 id="home-title"><span>Because of You</span><em>Project</em></h1>
+            <p class="hero-subtitle">Honouring the teachers who quietly changed lives.</p>
+            <blockquote>
+              “The opposite of grateful is not ungrateful. It is forgetful.”
+            </blockquote>
+            <p class="hero-description">
+              Many teachers never truly know how deeply they impacted a student’s life. This is your
+              chance to let them know.
             </p>
             <div class="hero-actions">
-              <a class="primary-button" href="#submit-story">Share Your Story</a>
-              <button class="ghost-button story-wall-trigger" data-view="leaderboard" type="button">Watch Stories</button>
+              <button class="primary-button" data-view="share" type="button">Share Your Story</button>
+              <button class="ghost-button" data-view="leaderboard" type="button">Watch Stories</button>
             </div>
           </div>
-          <div class="hero-visual" aria-label="Because of You project visual">
-            <div class="hug-card">
-              <div class="hug-scene">
-                <span class="person teacher"></span>
-                <span class="person student"></span>
-                <span class="thank-note">Thank<br />you</span>
-              </div>
-            </div>
-            <div class="quote-card floating">
-              <span class="quote-mark">"</span>
+          <div class="hero-photo-wrap">
+            <img src="teacher-hug.png" alt="Students hugging and thanking a teacher" />
+            <div class="photo-note">
+              <span>“</span>
               <p>When one story shines, another life is inspired.</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        <section class="impact-strip" id="about-project" aria-label="Project impact">
-          <div>
-            <span class="impact-icon">♡</span>
+        <section class="value-cards" id="about-project" aria-label="Because of You Project values">
+          <article>
+            <span>♡</span>
             <p>One story can honour a teacher.</p>
-          </div>
-          <div>
-            <span class="impact-icon">☆</span>
+          </article>
+          <article>
+            <span>☆</span>
             <p>One teacher can change a future.</p>
-          </div>
-          <div>
-            <span class="impact-icon">☼</span>
+          </article>
+          <article>
+            <span>☼</span>
             <p>One message can inspire a life.</p>
-          </div>
-          <div>
-            <span class="impact-icon">♢</span>
+          </article>
+          <article>
+            <span>♢</span>
             <p>One community can make a difference.</p>
-          </div>
+          </article>
         </section>
 
-        <section class="story-wall-preview" aria-labelledby="stories-preview-title">
-          <div class="section-heading compact-heading">
-            <div>
-              <p class="eyebrow">Stories Wall</p>
-              <h2 id="stories-preview-title">Real stories. Real impact. Real teachers.</h2>
-            </div>
-            <button class="ghost-button story-wall-trigger" data-view="leaderboard" type="button">View Leaderboard</button>
+        <section class="home-stories-preview" aria-labelledby="preview-title">
+          <div class="section-heading">
+            <p class="eyebrow">Stories Wall</p>
+            <h2 id="preview-title">Real stories. Real impact. Real teachers.</h2>
           </div>
-          <div class="story-card-row">
+          <div class="story-card-row preview-row">
             <article class="story-card">
+              <img src="teacher-hug.png" alt="Teacher appreciation moment" />
               <span class="story-tag">TEXT</span>
-              <p>Teacher BOBO was the first teacher who made me believe I can improve in BM.</p>
-              <strong>Tan Kang Ming</strong>
+              <h3>Teacher BOBO helped me believe again</h3>
+              <p>I used to feel nervous before BM exams, but Teacher BOBO kept guiding me patiently.</p>
+              <small>Tan Kang Ming · Teacher BOBO</small>
             </article>
             <article class="story-card">
+              <img src="teacher-hug.png" alt="Student appreciation story" />
               <span class="story-tag">TEXT</span>
-              <p>I almost gave up, but Ms Ong stayed patient and helped me prepare for exams.</p>
-              <strong>Chong Xin Yin</strong>
+              <h3>She stayed patient when I wanted to give up</h3>
+              <p>Ms Ong reminded me that progress takes time, and that made me keep going.</p>
+              <small>Chong Xin Yin · MS ONG</small>
             </article>
-            <article class="story-card media-story-card">
-              <div class="story-media">
-                <img src="teacher-hug.png" alt="Teacher receiving appreciation from students" />
-                <span class="story-tag">VIDEO</span>
-              </div>
-              <p>A short video can say thank you in the student's own voice.</p>
-              <strong>CS Tuition Student</strong>
+            <article class="story-card">
+              <img src="teacher-hug.png" alt="Students thanking a teacher" />
+              <span class="story-tag">VIDEO</span>
+              <h3>A short video can say what words cannot</h3>
+              <p>Students can share their voice, their smile, and their thank-you in one place.</p>
+              <small>CS Tuition Student · Teacher's Day</small>
             </article>
           </div>
         </section>
+      </section>
 
-        <div class="content-grid">
-          <section class="panel submit-panel" id="submit-story" aria-labelledby="form-title">
-            <div class="panel-header">
-              <div>
-                <p class="eyebrow">Submit your story</p>
-                <h2 id="form-title">Student Appreciation Upload</h2>
-              </div>
-              <span class="status-pill">Video or text</span>
+      <section id="leaderboard" class="view">
+        <section class="stories-wall" aria-labelledby="stories-title">
+          <div class="section-heading centered">
+            <p class="eyebrow">Stories Wall</p>
+            <h1 id="stories-title">Stories Wall</h1>
+            <p>Real stories. Real impact. Real teachers.</p>
+          </div>
+
+          <div class="filter-tabs" aria-label="Story categories">
+            <button class="active" type="button">All Stories</button>
+            <button type="button">Videos</button>
+            <button type="button">Text Stories</button>
+            <button type="button">Teachers</button>
+            <button type="button">Moments</button>
+          </div>
+
+          <div class="story-carousel">
+            <article class="story-card">
+              <img src="teacher-hug.png" alt="Students thanking a teacher" />
+              <span class="story-tag">TEXT</span>
+              <h3>Teacher BOBO was the first teacher who made me believe I can improve.</h3>
+              <p>I was afraid of BM, but she explained slowly and never made me feel small.</p>
+              <small>Tan Kang Ming · Teacher BOBO</small>
+            </article>
+            <article class="story-card">
+              <img src="teacher-hug.png" alt="Teacher appreciation message" />
+              <span class="story-tag">TEXT</span>
+              <h3>I almost gave up until my teacher stayed after class.</h3>
+              <p>That extra ten minutes helped me feel seen, supported, and ready to try again.</p>
+              <small>Chong Xin Yin · MS ONG</small>
+            </article>
+            <article class="story-card">
+              <img src="teacher-hug.png" alt="Teacher and students celebration" />
+              <span class="story-tag">VIDEO</span>
+              <h3>She did not just teach me Math, she taught me how to keep going.</h3>
+              <p>Sometimes one sentence from a teacher becomes something you remember for life.</p>
+              <small>Anonymous Student · DR. CS WONG</small>
+            </article>
+          </div>
+
+          <div class="leaderboard-stage">
+            <div class="section-heading compact">
+              <p class="eyebrow">Live ranking</p>
+              <h2>Most Thanked Teachers</h2>
             </div>
+            <ol class="leaderboard-list large" id="leaderboard-full"></ol>
+          </div>
+        </section>
+      </section>
 
-            <form id="story-form">
+      <section id="share" class="view">
+        <section class="story-flow" aria-labelledby="share-title">
+          <aside class="progress-sidebar" aria-label="Story progress">
+            <img src="cs-tuition-logo-outline.png" alt="" />
+            <ol id="form-progress">
+              <li class="active">Your Story</li>
+              <li>About You</li>
+              <li>Teacher</li>
+              <li>Upload</li>
+              <li>Review</li>
+            </ol>
+            <div class="need-help">
+              <strong>Need help?</strong>
+              <p>Your story can be in video or text. Whatever feels honest is enough.</p>
+            </div>
+          </aside>
+
+          <form id="story-form" class="multi-step-form">
+            <div class="mobile-progress" id="mobile-progress">Step 1 of 5</div>
+
+            <section class="form-step active" data-step="0">
+              <div class="step-intro">
+                <p class="eyebrow">Your Story</p>
+                <h1 id="share-title">Your story matters.</h1>
+                <p>Let’s remember the moment that changed everything.</p>
+                <img src="teacher-hug.png" alt="Teacher appreciation" />
+              </div>
+              <div class="step-actions single">
+                <button class="primary-button form-next" type="button">Start Your Story</button>
+              </div>
+            </section>
+
+            <section class="form-step" data-step="1">
+              <p class="step-count">1 Before meeting this teacher</p>
+              <label>
+                Before meeting this teacher, what challenges were you facing at that time?
+                <textarea
+                  name="storyBefore"
+                  rows="6"
+                  placeholder="e.g. I lacked confidence in Math and was afraid of exams."
+                  required
+                ></textarea>
+              </label>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button form-next" type="button">Next</button>
+              </div>
+            </section>
+
+            <section class="form-step" data-step="2">
+              <p class="step-count">2 Impact moment</p>
+              <label>
+                What did this teacher do or say that impacted you?
+                <small>A moment, a line, an act of kindness — something you’ll never forget.</small>
+                <textarea name="impactMoment" rows="6" placeholder="Share that moment..." required></textarea>
+              </label>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button form-next" type="button">Next</button>
+              </div>
+            </section>
+
+            <section class="form-step" data-step="3">
+              <p class="step-count">3 About you and your teacher</p>
               <div class="field-grid">
                 <label>
                   Student name
                   <input name="studentName" type="text" placeholder="e.g. Tan Mei Xin" required />
                 </label>
                 <label>
-                  Grade / Level
+                  Student phone number
+                  <input name="studentPhone" type="tel" placeholder="e.g. 012-3456789" required />
+                </label>
+                <label>
+                  Student email
+                  <input name="studentEmail" type="email" placeholder="e.g. student@email.com" required />
+                </label>
+                <label>
+                  Year / Form
                   <select id="grade-select" name="grade" required>
-                    <option value="">Choose grade / level</option>
+                    <option value="">Choose year / form</option>
                   </select>
                 </label>
-                <label class="wide">
+                <label>
+                  Subject
+                  <input name="subject" type="text" placeholder="e.g. BM, Math, Science" required />
+                </label>
+                <label>
                   School
                   <input name="school" type="text" placeholder="e.g. SMK Seri Mutiara" required />
                 </label>
               </div>
-
               <fieldset class="choice-field">
-                <legend>Teacher(s) you want to thank</legend>
+                <legend>Teacher name</legend>
                 <div class="teacher-options" id="teacher-options"></div>
                 <p class="field-help">You can choose one or more teachers.</p>
               </fieldset>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button form-next" type="button">Next</button>
+              </div>
+            </section>
 
+            <section class="form-step" data-step="4">
+              <p class="step-count">4 What changed in you after that?</p>
               <label>
-                Your story / appreciation message
+                What improved? How did it change your life?
                 <textarea
-                  name="story"
-                  rows="7"
-                  placeholder="Share what your teacher did, what changed for you, and what you want to say to them."
+                  name="personalChange"
+                  rows="5"
+                  placeholder="e.g. I gained confidence, improved my grades, and believed in myself."
+                  required
                 ></textarea>
               </label>
-
-              <label class="upload-box" for="video-file">
-                <input id="video-file" name="video" type="file" accept="video/*" />
-                <span class="upload-icon" aria-hidden="true"></span>
-                <strong>Upload a video</strong>
-                <small>MP4, MOV, or any phone video format. Text-only stories are welcome too.</small>
-                <em id="file-name">No video selected</em>
+              <label>
+                What would you like to say to this teacher today?
+                <small>Your words will mean more than you know.</small>
+                <textarea name="teacherMessage" rows="5" placeholder="Write your message to the teacher..." required></textarea>
               </label>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button form-next" type="button">Next</button>
+              </div>
+            </section>
 
+            <section class="form-step" data-step="5">
+              <p class="step-count">5 Upload</p>
+              <div class="upload-copy">
+                <h2>Upload your video or photo</h2>
+                <p>Share your face, your voice, or a photo with your message.</p>
+              </div>
+              <label class="upload-box" for="video-file">
+                <input id="video-file" name="video" type="file" accept="video/*,image/jpeg,image/png" />
+                <span class="upload-icon" aria-hidden="true">+</span>
+                <strong>Drag & drop your video or photo here</strong>
+                <small>MP4, MOV, JPG, or PNG. Upload is optional.</small>
+                <em id="file-name">No file selected</em>
+              </label>
               <label class="consent-row">
                 <input name="consent" type="checkbox" required />
                 <span>
-                  I agree that CS Tuition may review, edit, and use this video or story for teacher
-                  appreciation and marketing materials.
+                  I agree that CS Tuition may store and use this story for teacher appreciation and
+                  marketing materials.
                 </span>
               </label>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button form-next" type="button">Review Story</button>
+              </div>
+            </section>
 
-              <div class="form-actions">
-                <button class="primary-button" type="submit">Submit Story</button>
-                <button class="ghost-button" id="clear-form" type="button">Clear</button>
+            <section class="form-step" data-step="6">
+              <p class="step-count">Review</p>
+              <h2>Review your story before we submit it.</h2>
+              <div class="review-card" id="review-card">
+                <p>Your story preview will appear here.</p>
+              </div>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button" id="submit-story-button" type="submit" disabled>Submit Story</button>
               </div>
               <p class="form-note" id="form-note" role="status"></p>
-            </form>
-          </section>
-
-          <aside class="panel leaderboard-panel" aria-labelledby="mini-leaderboard-title">
-            <div class="panel-header">
-              <div>
-                <p class="eyebrow">Live ranking</p>
-                <h2 id="mini-leaderboard-title">Most Thanked Teachers</h2>
-              </div>
-            </div>
-            <ol class="leaderboard-list" id="leaderboard-mini"></ol>
-          </aside>
-        </div>
+            </section>
+          </form>
+        </section>
       </section>
 
-      <section id="leaderboard" class="view">
-        <div class="section-heading">
-          <p class="eyebrow">Teacher appreciation leaderboard</p>
-          <h1>See which teachers students are thanking most.</h1>
-        </div>
-        <div class="leaderboard-stage">
-          <ol class="leaderboard-list large" id="leaderboard-full"></ol>
-        </div>
+      <section id="thank-you" class="view">
+        <section class="thank-you-page">
+          <div class="thank-you-card">
+            <img src="cs-tuition-logo-outline.png" alt="" />
+            <h1>Thank You!</h1>
+            <p>Your story has been submitted. You just made a teacher’s day — maybe their life.</p>
+            <blockquote>“When one story shines, another life is inspired.”</blockquote>
+            <button class="primary-button" data-view="student" type="button">Back to Home</button>
+          </div>
+        </section>
       </section>
 
       <section id="admin" class="view">
@@ -222,7 +359,7 @@
             <div class="admin-actions">
               <button class="ghost-button" id="export-csv" type="button">Download CSV</button>
               <button class="ghost-button" id="export-json" type="button">Download JSON</button>
-              <button class="ghost-button" id="download-all-videos" type="button">Download All Videos</button>
+              <button class="ghost-button" id="download-all-videos" type="button">Download All Files</button>
               <button class="ghost-button" id="admin-logout" type="button">Log Out</button>
               <button class="danger-button" id="clear-all" type="button">Clear All</button>
             </div>
@@ -249,9 +386,7 @@
               >
                 Open Drive Folder
               </a>
-              <small id="drive-sync-note">
-                Auto-sync is ready for backend connection. Add a Google Apps Script or server endpoint in app.js.
-              </small>
+              <small id="drive-sync-note">Auto-sync status will appear here.</small>
             </div>
           </section>
 
@@ -289,7 +424,7 @@
             </div>
             <div class="metric">
               <span id="metric-videos">0</span>
-              <small>Videos</small>
+              <small>Uploads</small>
             </div>
             <div class="metric">
               <span id="metric-teachers">0</span>
@@ -302,11 +437,11 @@
               <thead>
                 <tr>
                   <th>Student</th>
-                  <th>Grade</th>
+                  <th>Year / Form</th>
                   <th>School</th>
                   <th>Teacher(s)</th>
                   <th>Story</th>
-                  <th>Video</th>
+                  <th>File</th>
                 </tr>
               </thead>
               <tbody id="submission-rows"></tbody>
