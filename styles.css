@@ -1,21 +1,24 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Allura&display=swap");
 
 :root {
-  --primary: #0057d9;
-  --primary-dark: #003184;
-  --primary-deep: #001f62;
+  --primary: #091a55;
+  --primary-dark: #061342;
+  --primary-deep: #041032;
   --accent: #efd06f;
   --accent-strong: #f7c948;
   --accent-soft: #fff4cf;
-  --pink: #ed2b8c;
+  --pink: #f20a78;
+  --pink-dark: #c90662;
+  --pink-soft: #fff0f7;
+  --purple: #4b1298;
   --ink: #0c1830;
   --muted: #65728c;
-  --line: #d5e1f4;
-  --bg: #f4f8ff;
+  --line: #ece9f4;
+  --bg: #fff7fb;
   --surface: #ffffff;
   --success: #19765b;
   --danger: #b83232;
-  --shadow: 0 18px 50px rgba(0, 49, 132, 0.16);
+  --shadow: 0 18px 50px rgba(242, 10, 120, 0.12);
 }
 
 * {
@@ -26,8 +29,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(135deg, rgba(0, 87, 217, 0.08), transparent 28rem),
-    linear-gradient(180deg, #ffffff 0%, var(--bg) 48%, #e9f1ff 100%);
+    radial-gradient(circle at 75% 8%, rgba(242, 10, 120, 0.12), transparent 20rem),
+    radial-gradient(circle at 10% 45%, rgba(75, 18, 152, 0.08), transparent 22rem),
+    linear-gradient(180deg, #ffffff 0%, var(--bg) 55%, #ffffff 100%);
   color: var(--ink);
   font-family: "Montserrat", sans-serif;
 }
@@ -51,11 +55,10 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem clamp(1rem, 4vw, 3rem);
-  background:
-    linear-gradient(90deg, rgba(0, 49, 132, 0.96), rgba(0, 87, 217, 0.92)),
-    #003184;
-  border-bottom: 3px solid var(--accent);
+  padding: 0.9rem clamp(1rem, 4vw, 3rem);
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(236, 233, 244, 0.95);
+  box-shadow: 0 10px 30px rgba(9, 26, 85, 0.06);
   backdrop-filter: blur(18px);
 }
 
@@ -63,19 +66,19 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  color: #fff;
+  color: var(--primary);
   text-decoration: none;
-  min-width: 18rem;
+  min-width: 16rem;
 }
 
 .brand-logo {
-  width: 4.35rem;
-  height: 4.35rem;
+  width: 3.2rem;
+  height: 3.2rem;
   object-fit: contain;
   background: #fff;
-  border-radius: 6px;
-  padding: 0.25rem;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+  padding: 0.18rem;
+  box-shadow: 0 10px 24px rgba(242, 10, 120, 0.12);
 }
 
 .brand strong,
@@ -85,7 +88,7 @@ button {
 }
 
 .brand small {
-  color: rgba(255, 255, 255, 0.76);
+  color: var(--muted);
   font-size: 0.78rem;
 }
 
@@ -93,29 +96,55 @@ button {
   display: flex;
   gap: 0.4rem;
   padding: 0.3rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.12);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  align-items: center;
 }
 
 .tab-button {
   min-height: 2.45rem;
   border: 0;
-  border-radius: 6px;
+  border-radius: 999px;
   padding: 0 0.9rem;
   background: transparent;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--primary);
   white-space: nowrap;
 }
 
 .tab-button.active {
-  background: var(--accent);
-  color: var(--primary-deep);
-  box-shadow: 0 8px 18px rgba(239, 208, 111, 0.24);
+  background: var(--pink-soft);
+  color: var(--pink);
+  box-shadow: none;
+}
+
+.nav-link,
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.45rem;
+  border-radius: 999px;
+  padding: 0 0.95rem;
+  color: var(--primary);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-cta {
+  background: var(--pink);
+  color: #fff;
+  box-shadow: 0 12px 25px rgba(242, 10, 120, 0.22);
+}
+
+.admin-tab {
+  border: 1px solid var(--line);
+  color: var(--muted);
 }
 
 main {
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1220px, calc(100% - 1.5rem));
   margin: 0 auto;
   padding: 2rem 0 4rem;
 }
@@ -131,27 +160,28 @@ main {
 .hero-band {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(21rem, 0.72fr);
+  grid-template-columns: minmax(0, 1.02fr) minmax(22rem, 0.8fr);
   gap: clamp(1.5rem, 4vw, 3rem);
   align-items: center;
-  min-height: 24rem;
-  padding: clamp(1.4rem, 4vw, 3rem);
-  border-radius: 8px;
+  min-height: 33rem;
+  padding: clamp(1.4rem, 5vw, 4rem);
+  border: 1px solid var(--line);
+  border-radius: 22px;
   background:
-    linear-gradient(135deg, rgba(0, 49, 132, 0.98), rgba(0, 87, 217, 0.92)),
-    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0 1px, transparent 1px 20px);
-  color: #fff;
+    radial-gradient(circle at 74% 43%, rgba(255, 206, 227, 0.95) 0 8rem, transparent 8.2rem),
+    radial-gradient(circle at 84% 18%, rgba(242, 10, 120, 0.07), transparent 16rem),
+    #fff;
+  color: var(--primary);
   box-shadow: var(--shadow);
   overflow: hidden;
 }
 
 .hero-band::after {
-  content: "A";
-  position: absolute;
-  right: clamp(-2rem, -1vw, 1rem);
-  bottom: -5.5rem;
-  color: rgba(239, 208, 111, 0.5);
-  font-size: clamp(16rem, 31vw, 29rem);
+  content: "♡";
+  right: clamp(1rem, 6vw, 5rem);
+  bottom: clamp(1rem, 5vw, 3rem);
+  color: rgba(242, 10, 120, 0.18);
+  font-size: clamp(3rem, 9vw, 7rem);
   font-weight: 900;
   line-height: 0.8;
   pointer-events: none;
@@ -166,46 +196,148 @@ main {
 .section-heading h1 {
   margin: 0;
   font-family: "Montserrat", sans-serif;
-  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  font-size: clamp(3.2rem, 8vw, 6.9rem);
   line-height: 1;
-  max-width: 14ch;
+  max-width: 11ch;
   letter-spacing: 0;
 }
 
+.hero-copy h1 em {
+  display: block;
+  margin-top: -0.18em;
+  color: var(--pink);
+  font-family: "Allura", cursive;
+  font-size: 0.9em;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
 .hero-copy p:not(.eyebrow) {
-  max-width: 42rem;
-  color: rgba(255, 255, 255, 0.86);
-  font-size: 1.1rem;
-  line-height: 1.7;
+  max-width: 43rem;
+  color: var(--primary);
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+.hero-copy .hero-subtitle {
+  max-width: 31rem;
+  font-size: clamp(1.3rem, 2.4vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.25;
 }
 
 .eyebrow {
   margin: 0 0 0.65rem;
   color: var(--pink);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.story-preview {
-  display: grid;
-  gap: 1rem;
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
 }
 
-.preview-card {
+.hero-visual {
   position: relative;
-  padding: 1.3rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
+  display: grid;
+  min-height: 26rem;
+  place-items: center;
 }
 
-.preview-card.lifted {
-  transform: translateX(-1rem);
+.hug-card {
+  position: relative;
+  width: min(100%, 25rem);
+  aspect-ratio: 0.82;
+  border-radius: 50% 50% 8px 8px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.9), transparent 39%),
+    linear-gradient(180deg, #ffe3ef 0%, #fff 100%);
+  box-shadow: 0 24px 55px rgba(242, 10, 120, 0.14);
+  overflow: hidden;
+}
+
+.hug-card::before {
+  content: "";
+  position: absolute;
+  inset: 2rem;
+  border-radius: 50%;
+  border: 1.4rem dotted rgba(242, 10, 120, 0.1);
+}
+
+.hug-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.person {
+  position: absolute;
+  bottom: 2.5rem;
+  width: 7.5rem;
+  height: 12rem;
+  border-radius: 4rem 4rem 1rem 1rem;
+  background: linear-gradient(180deg, #eef3ff, #dfe9ff);
+}
+
+.person::before {
+  content: "";
+  position: absolute;
+  top: -3rem;
+  left: 1.6rem;
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 50%;
+  background: #1f2540;
+}
+
+.person.teacher {
+  left: 6rem;
+  transform: rotate(-8deg);
+}
+
+.person.student {
+  right: 5rem;
+  background: linear-gradient(180deg, #ffeef6, #f8cfe1);
+  transform: rotate(8deg);
+}
+
+.thank-note {
+  position: absolute;
+  right: 3.3rem;
+  bottom: 5.5rem;
+  display: grid;
+  width: 6.7rem;
+  height: 5.2rem;
+  place-items: center;
+  transform: rotate(-10deg);
+  border-radius: 8px;
   background: #fff;
-  color: var(--ink);
+  color: var(--primary);
+  font-family: "Allura", cursive;
+  font-size: 1.7rem;
+  line-height: 0.86;
+  box-shadow: 0 12px 28px rgba(9, 26, 85, 0.12);
+}
+
+.quote-card {
+  position: relative;
+  width: min(18rem, 86%);
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 36px rgba(9, 26, 85, 0.12);
+}
+
+.quote-card.floating {
+  position: absolute;
+  right: 0;
+  bottom: 1.2rem;
 }
 
 .quote-mark {
@@ -228,6 +360,99 @@ main {
   border: 2px solid var(--accent);
 }
 
+.impact-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 36px rgba(9, 26, 85, 0.05);
+  overflow: hidden;
+}
+
+.impact-strip div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+}
+
+.impact-strip div:last-child {
+  border-right: 0;
+}
+
+.impact-strip p {
+  margin: 0;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.impact-icon {
+  color: var(--pink);
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.story-wall-preview {
+  margin-top: 1.25rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 16px 36px rgba(9, 26, 85, 0.05);
+}
+
+.compact-heading {
+  margin: 0 0 1rem;
+}
+
+.compact-heading h2 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.story-card-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.story-card {
+  min-height: 12rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 240, 247, 0.8), #fff 52%),
+    #fff;
+  box-shadow: 0 10px 24px rgba(9, 26, 85, 0.06);
+}
+
+.story-tag {
+  display: inline-flex;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: var(--pink);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.story-card p {
+  color: var(--primary);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.story-card strong {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
 .content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(19rem, 0.38fr);
@@ -238,14 +463,14 @@ main {
 
 .panel {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 22px;
   background: var(--surface);
   box-shadow: 0 10px 28px rgba(23, 32, 51, 0.06);
 }
 
 .submit-panel,
 .leaderboard-panel {
-  padding: clamp(1rem, 3vw, 1.5rem);
+  padding: clamp(1rem, 3vw, 1.6rem);
 }
 
 .panel-header {
@@ -298,7 +523,7 @@ textarea,
 select {
   width: 100%;
   border: 1px solid #cfd9e8;
-  border-radius: 8px;
+  border-radius: 14px;
   padding: 0.82rem 0.9rem;
   background: #fff;
   color: var(--ink);
@@ -313,8 +538,8 @@ textarea {
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(17, 63, 140, 0.12);
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(242, 10, 120, 0.12);
 }
 
 .choice-field {
@@ -339,8 +564,8 @@ select:focus {
   overflow: auto;
   padding: 0.8rem;
   border: 1px solid #cfd9e8;
-  border-radius: 8px;
-  background: #f8fbff;
+  border-radius: 16px;
+  background: #fffafd;
 }
 
 .teacher-choice {
@@ -351,7 +576,7 @@ select:focus {
   min-height: 2.55rem;
   padding: 0.55rem 0.65rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 999px;
   background: #fff;
   color: var(--ink);
   font-weight: 800;
@@ -360,7 +585,7 @@ select:focus {
 .teacher-choice input {
   width: 1.05rem;
   height: 1.05rem;
-  accent-color: var(--primary);
+  accent-color: var(--pink);
 }
 
 .field-help {
@@ -373,9 +598,9 @@ select:focus {
   place-items: center;
   min-height: 12rem;
   padding: 1.4rem;
-  border: 1.5px dashed #9db2d1;
-  border-radius: 8px;
-  background: #f8fbff;
+  border: 1.5px dashed rgba(242, 10, 120, 0.38);
+  border-radius: 18px;
+  background: #fffafd;
   text-align: center;
 }
 
@@ -407,7 +632,7 @@ select:focus {
   width: 1.1rem;
   height: 1.1rem;
   margin-top: 0.25rem;
-  accent-color: var(--primary);
+  accent-color: var(--pink);
 }
 
 .form-actions,
@@ -539,8 +764,8 @@ select:focus {
 .admin-login-form {
   padding: 1rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #f8fbff;
+  border-radius: 18px;
+  background: #fffafd;
 }
 
 .admin-content.locked,
@@ -556,7 +781,7 @@ select:focus {
   align-items: end;
   padding: 1rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 18px;
   background: #fff;
 }
 
@@ -592,7 +817,7 @@ select:focus {
   align-items: center;
   justify-content: center;
   min-height: 2.7rem;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 0 1rem;
   border: 1px solid transparent;
   font-weight: 800;
@@ -600,16 +825,16 @@ select:focus {
 }
 
 .primary-button {
-  background: var(--accent);
-  color: var(--primary-deep);
-  box-shadow: 0 9px 18px rgba(239, 208, 111, 0.28);
+  background: var(--pink);
+  color: #fff;
+  box-shadow: 0 14px 28px rgba(242, 10, 120, 0.26);
 }
 
 .ghost-button,
 .download-link {
   background: #fff;
   color: var(--primary);
-  border-color: #b8c7dc;
+  border-color: var(--line);
 }
 
 .danger-button {
@@ -635,7 +860,7 @@ select:focus {
   align-items: center;
   padding: 0.86rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 16px;
   background: #fff;
 }
 
@@ -646,7 +871,7 @@ select:focus {
   height: 2rem;
   place-items: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: linear-gradient(135deg, var(--pink), var(--purple));
   color: #fff;
   font-weight: 900;
 }
@@ -698,7 +923,7 @@ select:focus {
 .leaderboard-stage {
   padding: clamp(1rem, 3vw, 1.5rem);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 22px;
   background: rgba(255, 255, 255, 0.78);
 }
 
@@ -716,7 +941,7 @@ select:focus {
 .metric {
   padding: 1.1rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 18px;
   background: #fff;
 }
 
@@ -738,7 +963,7 @@ select:focus {
 .submissions-table-wrap {
   overflow-x: auto;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 18px;
   background: #fff;
 }
 
@@ -788,22 +1013,43 @@ td {
 
   .nav-tabs {
     overflow-x: auto;
+    padding-bottom: 0.2rem;
   }
 
   .hero-band,
   .content-grid,
   .admin-filter-panel,
   .admin-login-panel,
-  .settings-grid {
+  .settings-grid,
+  .story-card-row,
+  .impact-strip {
     grid-template-columns: 1fr;
+  }
+
+  .hero-band {
+    min-height: auto;
+  }
+
+  .hero-visual {
+    min-height: 24rem;
+  }
+
+  .impact-strip div {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .impact-strip div:last-child {
+    border-bottom: 0;
   }
 
   .option-form {
     grid-template-columns: 1fr;
   }
 
-  .preview-card.lifted {
-    transform: none;
+  .quote-card.floating {
+    right: 1rem;
+    bottom: 0.5rem;
   }
 
   .field-grid,
@@ -820,18 +1066,86 @@ td {
 
   .topbar {
     padding: 0.8rem;
+    position: static;
+  }
+
+  .brand {
+    align-items: center;
+  }
+
+  .brand-logo {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .brand strong {
+    font-size: 0.9rem;
+  }
+
+  .brand small {
+    font-size: 0.68rem;
   }
 
   .hero-band {
-    padding: 1rem;
+    padding: 1.2rem;
+    border-radius: 18px;
   }
 
-  .hero-copy h1,
+  .hero-copy h1 {
+    font-size: clamp(3.1rem, 16vw, 4.7rem);
+  }
+
   .section-heading h1 {
     font-size: 2.2rem;
   }
 
+  .hero-copy p:not(.eyebrow) {
+    font-size: 0.98rem;
+  }
+
+  .hero-actions .primary-button,
+  .hero-actions .ghost-button {
+    width: 100%;
+  }
+
   .tab-button {
     padding: 0 0.7rem;
+  }
+
+  .nav-link,
+  .nav-cta {
+    padding: 0 0.7rem;
+  }
+
+  .hero-visual {
+    min-height: 20rem;
+  }
+
+  .hug-card {
+    width: min(19rem, 96%);
+  }
+
+  .person {
+    width: 5.3rem;
+    height: 8.6rem;
+  }
+
+  .person.teacher {
+    left: 3.7rem;
+  }
+
+  .person.student {
+    right: 3.2rem;
+  }
+
+  .thank-note {
+    right: 2rem;
+    bottom: 4rem;
+    width: 5.3rem;
+    height: 4.2rem;
+  }
+
+  .teacher-options {
+    grid-template-columns: 1fr;
   }
 }

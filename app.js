@@ -3,7 +3,6 @@ const DB_VERSION = 1;
 const STORE_NAME = "submissions";
 const DRIVE_FOLDER_ID = "1r20GuBnI0dxaC3n7ac3bCwkwTiCgaEnP";
 const DRIVE_UPLOAD_ENDPOINT = "";
-const ADMIN_PASSWORD = "CSTuitionAdmin2026!";
 const ADMIN_SESSION_KEY = "cs-tuition-admin-unlocked";
 const GRADE_OPTIONS_KEY = "cs-tuition-grade-options";
 const TEACHER_OPTIONS_KEY = "cs-tuition-teacher-options";
@@ -408,11 +407,7 @@ async function syncServerAdminStatus() {
 
 async function loginAdmin(password) {
   if (!serverMode) {
-    if (password !== ADMIN_PASSWORD) {
-      throw new Error("Incorrect password. Please try again.");
-    }
-    setAdminUnlocked(true);
-    return;
+    throw new Error("Admin login requires the website server. Please run npm start.");
   }
 
   const response = await fetch(`${SERVER_API_BASE}/api/admin/login`, {
@@ -759,12 +754,23 @@ async function refresh() {
   renderAll();
 }
 
+function activateView(view) {
+  const matchingTab = [...els.tabs].find((item) => item.dataset.view === view);
+
+  els.tabs.forEach((item) => item.classList.toggle("active", item === matchingTab));
+  els.views.forEach((item) => item.classList.toggle("active", item.id === view));
+  window.location.hash = view;
+}
+
 els.tabs.forEach((tab) => {
   tab.addEventListener("click", () => {
-    const view = tab.dataset.view;
-    els.tabs.forEach((item) => item.classList.toggle("active", item === tab));
-    els.views.forEach((item) => item.classList.toggle("active", item.id === view));
-    window.location.hash = view;
+    activateView(tab.dataset.view);
+  });
+});
+
+document.querySelectorAll(".story-wall-trigger[data-view]").forEach((button) => {
+  button.addEventListener("click", () => {
+    activateView(button.dataset.view);
   });
 });
 
@@ -962,8 +968,9 @@ els.clearAll.addEventListener("click", async () => {
 
 window.addEventListener("hashchange", () => {
   const view = window.location.hash.replace("#", "");
-  const tab = [...els.tabs].find((item) => item.dataset.view === view);
-  if (tab) tab.click();
+  if ([...els.views].some((item) => item.id === view)) {
+    activateView(view);
+  }
 });
 
 (async function init() {
@@ -978,6 +985,7 @@ window.addEventListener("hashchange", () => {
     : "Auto-sync is ready, but not connected yet. Add your Google Apps Script or backend endpoint in app.js.";
   await refresh();
   const initialView = window.location.hash.replace("#", "");
-  const initialTab = [...els.tabs].find((item) => item.dataset.view === initialView);
-  if (initialTab) initialTab.click();
+  if ([...els.views].some((item) => item.id === initialView)) {
+    activateView(initialView);
+  }
 })();

@@ -16,9 +16,11 @@
         </span>
       </a>
       <nav class="nav-tabs" aria-label="Main views">
-        <button class="tab-button active" data-view="student" type="button">Student Upload</button>
-        <button class="tab-button" data-view="leaderboard" type="button">Leaderboard</button>
-        <button class="tab-button" data-view="admin" type="button">Admin Log In</button>
+        <button class="tab-button active" data-view="student" type="button">Home</button>
+        <button class="tab-button" data-view="leaderboard" type="button">Stories Wall</button>
+        <a class="nav-link" href="#about-project">About</a>
+        <a class="nav-cta" href="#submit-story">Share Your Story</a>
+        <button class="tab-button admin-tab" data-view="admin" type="button">Admin</button>
       </nav>
     </header>
 
@@ -27,8 +29,8 @@
         <div class="hero-band">
           <div class="hero-copy">
             <p class="eyebrow">FOR STUDENTS &amp; FAMILIES</p>
-            <h1>Because of You Project</h1>
-            <p>
+            <h1><span>Because of You</span><em>Project</em></h1>
+            <p class="hero-subtitle">
               Honouring the teachers who quietly changed lives.
             </p>
             <p>
@@ -36,23 +38,74 @@
               teachers who supported your journey at CS Tuition. Selected stories may be featured
               in future CS Tuition celebrations and campaigns.
             </p>
-          </div>
-          <div class="story-preview" aria-label="Appreciation wall preview">
-            <div class="preview-card lifted">
-              <span class="quote-mark">"</span>
-              <p>Thank you Teacher BOBO for making BM easier to understand and for never giving up on me.</p>
-              <strong>Tan Kang Ming · FORM 5</strong>
+            <div class="hero-actions">
+              <a class="primary-button" href="#submit-story">Share Your Story</a>
+              <button class="ghost-button story-wall-trigger" data-view="leaderboard" type="button">Watch Stories</button>
             </div>
-            <div class="preview-card">
+          </div>
+          <div class="hero-visual" aria-label="Because of You project visual">
+            <div class="hug-card">
+              <div class="hug-scene">
+                <span class="person teacher"></span>
+                <span class="person student"></span>
+                <span class="thank-note">Thank<br />you</span>
+              </div>
+            </div>
+            <div class="quote-card floating">
               <span class="quote-mark">"</span>
-              <p>CS Tuition helped me become more confident before exams. Thank you Ms Ong for your patience and guidance.</p>
-              <strong>Chong Xin Yin · FORM 3</strong>
+              <p>When one story shines, another life is inspired.</p>
             </div>
           </div>
         </div>
 
+        <section class="impact-strip" id="about-project" aria-label="Project impact">
+          <div>
+            <span class="impact-icon">♡</span>
+            <p>One story can honour a teacher.</p>
+          </div>
+          <div>
+            <span class="impact-icon">☆</span>
+            <p>One teacher can change a future.</p>
+          </div>
+          <div>
+            <span class="impact-icon">☼</span>
+            <p>One message can inspire a life.</p>
+          </div>
+          <div>
+            <span class="impact-icon">♢</span>
+            <p>One community can make a difference.</p>
+          </div>
+        </section>
+
+        <section class="story-wall-preview" aria-labelledby="stories-preview-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="eyebrow">Stories Wall</p>
+              <h2 id="stories-preview-title">Real stories. Real impact. Real teachers.</h2>
+            </div>
+            <button class="ghost-button story-wall-trigger" data-view="leaderboard" type="button">View Leaderboard</button>
+          </div>
+          <div class="story-card-row">
+            <article class="story-card">
+              <span class="story-tag">TEXT</span>
+              <p>Teacher BOBO was the first teacher who made me believe I can improve in BM.</p>
+              <strong>Tan Kang Ming</strong>
+            </article>
+            <article class="story-card">
+              <span class="story-tag">TEXT</span>
+              <p>I almost gave up, but Ms Ong stayed patient and helped me prepare for exams.</p>
+              <strong>Chong Xin Yin</strong>
+            </article>
+            <article class="story-card">
+              <span class="story-tag">VIDEO</span>
+              <p>A short video can say thank you in the student's own voice.</p>
+              <strong>CS Tuition Student</strong>
+            </article>
+          </div>
+        </section>
+
         <div class="content-grid">
-          <section class="panel submit-panel" aria-labelledby="form-title">
+          <section class="panel submit-panel" id="submit-story" aria-labelledby="form-title">
             <div class="panel-header">
               <div>
                 <p class="eyebrow">Submit your story</p>
