@@ -85,6 +85,9 @@ const els = {
   clearForm: document.querySelector("#clear-form"),
   leaderboardMini: document.querySelector("#leaderboard-mini"),
   leaderboardFull: document.querySelector("#leaderboard-full"),
+  leaderboardRanking: document.querySelector("#leaderboard-ranking"),
+  rankingTotal: document.querySelector("#ranking-total"),
+  rankingTeacherTotal: document.querySelector("#ranking-teacher-total"),
   rows: document.querySelector("#submission-rows"),
   adminLoginPanel: document.querySelector("#admin-login-panel"),
   adminContent: document.querySelector("#admin-content"),
@@ -576,6 +579,11 @@ function renderVideoDownload(submission) {
 function renderAll() {
   if (els.leaderboardMini) renderLeaderboard(els.leaderboardMini, 5);
   if (els.leaderboardFull) renderLeaderboard(els.leaderboardFull);
+  if (els.leaderboardRanking) renderLeaderboard(els.leaderboardRanking);
+  if (els.rankingTotal) els.rankingTotal.textContent = submissions.length;
+  if (els.rankingTeacherTotal) {
+    els.rankingTeacherTotal.textContent = new Set(submissions.flatMap((item) => item.teachers)).size;
+  }
   renderAdmin();
 }
 

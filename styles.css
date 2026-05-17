@@ -367,6 +367,7 @@ main {
 
 .home-stories-preview,
 .stories-wall,
+.ranking-page,
 .leaderboard-stage,
 .admin-login-panel,
 .admin-content,
@@ -377,6 +378,36 @@ main {
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 16px 36px rgba(7, 22, 77, 0.06);
+}
+
+.leaderboard-summary-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.leaderboard-summary-card div {
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(7, 22, 77, 0.05);
+}
+
+.leaderboard-summary-card strong {
+  display: block;
+  color: var(--pink);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.leaderboard-summary-card small {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--primary);
+  font-weight: 800;
 }
 
 .section-heading {
@@ -1150,6 +1181,7 @@ td {
   .option-form,
   .settings-grid,
   .metrics-row,
+  .leaderboard-summary-card,
   .review-meta {
     grid-template-columns: 1fr;
   }

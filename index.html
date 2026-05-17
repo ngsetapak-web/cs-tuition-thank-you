@@ -20,7 +20,7 @@
       <nav class="main-nav" id="main-nav" aria-label="Main navigation">
         <button class="tab-button active" data-view="student" type="button">Home</button>
         <button class="tab-button" data-view="leaderboard" type="button">Stories Wall</button>
-        <a class="nav-link" href="#about-project">About</a>
+        <button class="tab-button" data-view="teacher-ranking" type="button">Leaderboard</button>
         <button class="nav-cta" data-view="share" type="button">Share Your Story</button>
         <button class="tab-button admin-tab" data-view="admin" type="button">Admin</button>
       </nav>
@@ -140,7 +140,7 @@
               <span class="story-tag">VIDEO</span>
               <h3>She did not just teach me Math, she taught me how to keep going.</h3>
               <p>Sometimes one sentence from a teacher becomes something you remember for life.</p>
-              <small>Anonymous Student · DR. CS WONG</small>
+              <small>Anonymous Student · MS WEI WEI</small>
             </article>
           </div>
 
@@ -150,6 +150,29 @@
               <h2>Most Thanked Teachers</h2>
             </div>
             <ol class="leaderboard-list large" id="leaderboard-full"></ol>
+          </div>
+        </section>
+      </section>
+
+      <section id="teacher-ranking" class="view">
+        <section class="ranking-page" aria-labelledby="ranking-title">
+          <div class="section-heading centered">
+            <p class="eyebrow">Teacher Leaderboard</p>
+            <h1 id="ranking-title">Most Thanked Teachers</h1>
+            <p>This ranking summarises which teachers students have thanked the most.</p>
+          </div>
+          <div class="leaderboard-summary-card">
+            <div>
+              <strong id="ranking-total">0</strong>
+              <small>Total student appreciations collected</small>
+            </div>
+            <div>
+              <strong id="ranking-teacher-total">0</strong>
+              <small>Teachers thanked by students</small>
+            </div>
+          </div>
+          <div class="leaderboard-stage ranking-stage">
+            <ol class="leaderboard-list large" id="leaderboard-ranking"></ol>
           </div>
         </section>
       </section>
