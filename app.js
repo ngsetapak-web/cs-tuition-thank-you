@@ -83,11 +83,7 @@ const els = {
   fileName: document.querySelector("#file-name"),
   formNote: document.querySelector("#form-note"),
   clearForm: document.querySelector("#clear-form"),
-  leaderboardMini: document.querySelector("#leaderboard-mini"),
-  leaderboardFull: document.querySelector("#leaderboard-full"),
-  leaderboardRanking: document.querySelector("#leaderboard-ranking"),
-  rankingTotal: document.querySelector("#ranking-total"),
-  rankingTeacherTotal: document.querySelector("#ranking-teacher-total"),
+  teacherStoryGroups: document.querySelector("#teacher-story-groups"),
   rows: document.querySelector("#submission-rows"),
   adminLoginPanel: document.querySelector("#admin-login-panel"),
   adminContent: document.querySelector("#admin-content"),
@@ -491,7 +487,7 @@ function parseTeachers(value) {
     .filter(Boolean);
 }
 
-function getLeaderboard() {
+function getTeacherAppreciationCounts() {
   const teacherCounts = new Map(teacherOptions.map((teacher) => [teacher, 0]));
 
   submissions.forEach((submission) => {
@@ -506,8 +502,8 @@ function getLeaderboard() {
     .sort((a, b) => b.count - a.count || a.teacher.localeCompare(b.teacher));
 }
 
-function renderLeaderboard(target, limit) {
-  const leaderboard = getLeaderboard().slice(0, limit);
+function renderTeacherAppreciationList(target, limit) {
+  const appreciationList = getTeacherAppreciationCounts().slice(0, limit);
   target.innerHTML = "";
 
   if (!submissions.length) {
@@ -515,17 +511,80 @@ function renderLeaderboard(target, limit) {
     return;
   }
 
-  leaderboard.forEach((entry) => {
+  appreciationList.forEach((entry) => {
     const li = document.createElement("li");
     li.innerHTML = `
       <span>
         <strong>${escapeHtml(entry.teacher)}</strong>
-        <small>${entry.count === 1 ? "1 student appreciation" : `${entry.count} student appreciations`}</small>
+        <small>${entry.count === 1 ? "1 story shared" : `${entry.count} stories shared`}</small>
       </span>
-      <span class="score">${entry.count}</span>
+      <span class="story-count">${entry.count}</span>
     `;
     target.append(li);
   });
+}
+
+function getTeacherStoryGroups() {
+  return teacherOptions
+    .map((teacher) => ({
+      teacher,
+      stories: submissions.filter((submission) => submission.teachers.includes(teacher)),
+    }))
+    .filter((group) => group.stories.length);
+}
+
+function renderTeacherStoryGroups() {
+  if (!els.teacherStoryGroups) return;
+
+  const groups = getTeacherStoryGroups();
+  els.teacherStoryGroups.innerHTML = "";
+
+  if (!groups.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state teacher-story-empty";
+    empty.textContent = "No stories yet. Once students submit, their messages will appear here by teacher.";
+    els.teacherStoryGroups.append(empty);
+    return;
+  }
+
+  groups.forEach((group) => {
+    const section = document.createElement("section");
+    section.className = "teacher-story-group";
+    section.innerHTML = `
+      <div class="teacher-story-heading">
+        <h3>${escapeHtml(group.teacher)}</h3>
+        <span>${group.stories.length === 1 ? "1 story" : `${group.stories.length} stories`}</span>
+      </div>
+      <div class="teacher-story-list">
+        ${group.stories.map(renderPublicStoryCard).join("")}
+      </div>
+    `;
+    els.teacherStoryGroups.append(section);
+  });
+}
+
+function renderPublicStoryCard(submission) {
+  const story = submission.story || "A video appreciation was shared for this teacher.";
+  const student = submission.studentName || "Anonymous Student";
+  const mediaLabel = submission.video ? "VIDEO" : "TEXT";
+
+  return `
+    <article class="public-story-card">
+      <span class="story-tag">${mediaLabel}</span>
+      <p>${escapeHtml(shortStoryPreview(story))}</p>
+      <small>${escapeHtml(student)} · ${escapeHtml(submission.grade || "CS Tuition Student")}</small>
+    </article>
+  `;
+}
+
+function shortStoryPreview(story) {
+  const cleaned = String(story || "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => !/^(Student phone|Student email|Subject):/i.test(line))
+    .join(" ");
+  return cleaned.length > 220 ? `${cleaned.slice(0, 220).trim()}...` : cleaned;
 }
 
 function renderAdmin() {
@@ -577,13 +636,7 @@ function renderVideoDownload(submission) {
 }
 
 function renderAll() {
-  if (els.leaderboardMini) renderLeaderboard(els.leaderboardMini, 5);
-  if (els.leaderboardFull) renderLeaderboard(els.leaderboardFull);
-  if (els.leaderboardRanking) renderLeaderboard(els.leaderboardRanking);
-  if (els.rankingTotal) els.rankingTotal.textContent = submissions.length;
-  if (els.rankingTeacherTotal) {
-    els.rankingTeacherTotal.textContent = new Set(submissions.flatMap((item) => item.teachers)).size;
-  }
+  renderTeacherStoryGroups();
   renderAdmin();
 }
 
@@ -1053,7 +1106,7 @@ els.form.addEventListener("submit", async (event) => {
   els.fileName.textContent = "No file selected";
   showFormStep(0);
   if (serverMode) {
-    els.formNote.innerHTML = `<span class="success">Submitted. The leaderboard is now updated for everyone.</span>`;
+    els.formNote.innerHTML = `<span class="success">Submitted. Your story is now part of the Stories Wall.</span>`;
   } else if (!DRIVE_UPLOAD_ENDPOINT) {
     els.formNote.innerHTML = `<span class="success">Submitted locally. This browser-only mode will not update other devices.</span>`;
   }

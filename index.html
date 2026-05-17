@@ -19,8 +19,7 @@
       </button>
       <nav class="main-nav" id="main-nav" aria-label="Main navigation">
         <button class="tab-button active" data-view="student" type="button">Home</button>
-        <button class="tab-button" data-view="leaderboard" type="button">Stories Wall</button>
-        <button class="tab-button" data-view="teacher-ranking" type="button">Leaderboard</button>
+        <button class="tab-button" data-view="stories-wall" type="button">Stories Wall</button>
         <button class="nav-cta" data-view="share" type="button">Share Your Story</button>
         <button class="tab-button admin-tab" data-view="admin" type="button">Admin</button>
       </nav>
@@ -42,7 +41,7 @@
             </p>
             <div class="hero-actions">
               <button class="primary-button" data-view="share" type="button">Share Your Story</button>
-              <button class="ghost-button" data-view="leaderboard" type="button">Watch Stories</button>
+              <button class="ghost-button" data-view="stories-wall" type="button">Watch Stories</button>
             </div>
           </div>
           <div class="hero-photo-wrap">
@@ -104,7 +103,7 @@
         </section>
       </section>
 
-      <section id="leaderboard" class="view">
+      <section id="stories-wall" class="view">
         <section class="stories-wall" aria-labelledby="stories-title">
           <div class="section-heading centered">
             <p class="eyebrow">Stories Wall</p>
@@ -144,35 +143,13 @@
             </article>
           </div>
 
-          <div class="leaderboard-stage">
+          <div class="teacher-stories-section">
             <div class="section-heading compact">
-              <p class="eyebrow">Live ranking</p>
-              <h2>Most Thanked Teachers</h2>
+              <p class="eyebrow">By Teacher</p>
+              <h2>Stories arranged by teacher</h2>
+              <p>Browse the messages and videos students have shared for each teacher.</p>
             </div>
-            <ol class="leaderboard-list large" id="leaderboard-full"></ol>
-          </div>
-        </section>
-      </section>
-
-      <section id="teacher-ranking" class="view">
-        <section class="ranking-page" aria-labelledby="ranking-title">
-          <div class="section-heading centered">
-            <p class="eyebrow">Teacher Leaderboard</p>
-            <h1 id="ranking-title">Most Thanked Teachers</h1>
-            <p>This ranking summarises which teachers students have thanked the most.</p>
-          </div>
-          <div class="leaderboard-summary-card">
-            <div>
-              <strong id="ranking-total">0</strong>
-              <small>Total student appreciations collected</small>
-            </div>
-            <div>
-              <strong id="ranking-teacher-total">0</strong>
-              <small>Teachers thanked by students</small>
-            </div>
-          </div>
-          <div class="leaderboard-stage ranking-stage">
-            <ol class="leaderboard-list large" id="leaderboard-ranking"></ol>
+            <div class="teacher-story-groups" id="teacher-story-groups"></div>
           </div>
         </section>
       </section>
@@ -475,7 +452,7 @@
     </main>
 
     <template id="empty-state-template">
-      <li class="empty-state">No submissions yet. The leaderboard will update after students submit.</li>
+      <li class="empty-state">No stories yet. Student messages will appear after they submit.</li>
     </template>
 
     <script src="app.js"></script>

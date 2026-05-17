@@ -150,14 +150,14 @@ const server = http.createServer(async (req, res) => {
 
     if (url.pathname === "/api/submissions" && req.method === "GET") {
       const submissions = await readSubmissions();
-      sendJson(res, isAdmin(req) ? submissions.map(toAdminSubmission) : submissions.map(toLeaderboardSubmission));
+      sendJson(res, isAdmin(req) ? submissions.map(toAdminSubmission) : submissions.map(toPublicSubmission));
       return;
     }
 
     if (url.pathname === "/api/submissions" && req.method === "POST") {
       const payload = await readJsonBody(req);
       const saved = await saveServerSubmission(payload);
-      sendJson(res, toLeaderboardSubmission(saved), 201);
+      sendJson(res, toPublicSubmission(saved), 201);
       return;
     }
 
@@ -366,11 +366,25 @@ function toAdminSubmission(submission) {
   };
 }
 
-function toLeaderboardSubmission(submission) {
+function toPublicSubmission(submission) {
   return {
     id: submission.id,
     createdAt: submission.createdAt,
+    studentName: submission.studentName,
+    grade: submission.grade,
     teachers: submission.teachers,
+    story: submission.story,
+    video: submission.video?.downloadUrl
+      ? {
+          type: submission.video.type,
+          downloadUrl: submission.video.downloadUrl,
+        }
+      : submission.video
+        ? {
+            type: submission.video.type,
+            name: submission.video.name || submission.video.fileName,
+          }
+        : null,
   };
 }
 
