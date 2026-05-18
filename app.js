@@ -605,7 +605,7 @@ function updateStoryFilterViews() {
 }
 
 function renderPublicStoryCard(submission) {
-  const story = submission.story || "A video appreciation was shared for this teacher.";
+  const story = buildPublicStoryPreview(submission.story) || "A video appreciation was shared for this teacher.";
   const student = submission.studentName || "Anonymous Student";
   const school = submission.school || "CS Tuition Student";
   const mediaLabel = submission.video ? "VIDEO" : "TEXT";
@@ -636,10 +636,26 @@ function renderPublicStoryMedia(submission) {
   return "";
 }
 
+function buildPublicStoryPreview(story) {
+  const sections = parseStorySections(story);
+  const storyParts = [
+    sections["Before meeting this teacher"] ? `Before meeting this teacher, ${sections["Before meeting this teacher"]}` : "",
+    sections["Impact moment"] || "",
+    sections["What changed after that"] ? `After that, ${sections["What changed after that"]}` : "",
+    sections["Message to teacher"] || "",
+    sections["Achievement before and after"] ? `Achievement: ${sections["Achievement before and after"]}` : "",
+  ].filter(Boolean);
+
+  if (storyParts.length) {
+    return shortStoryPreview(storyParts.join(" "));
+  }
+
+  return shortStoryPreview(story);
+}
+
 function shortStoryPreview(story) {
   const text = String(story || "");
-  const messageMatch = text.match(/Message to teacher:\s*([\s\S]*?)(?:\n\s*\n|Achievement before and after:|$)/i);
-  const cleaned = (messageMatch?.[1] || text)
+  const cleaned = text
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)
