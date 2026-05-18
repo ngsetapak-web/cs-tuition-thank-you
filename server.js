@@ -12,7 +12,7 @@ const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || "";
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || "";
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || "";
 const GOOGLE_SYNC_ENDPOINT = process.env.GOOGLE_SYNC_ENDPOINT
-  || "https://script.google.com/a/macros/cstuition.com.my/s/AKfycbzZmcB2I_ZdFNhAOBcp9U0JDCcUOaJOfFn6UJ8wDwPTqAG4DjxSDa7pvKxxo_0-t09NyA/exec";
+  || "https://script.google.com/macros/s/AKfycbzZmcB2I_ZdFNhAOBcp9U0JDCcUOaJOfFn6UJ8wDwPTqAG4DjxSDa7pvKxxo_0-t09NyA/exec";
 const GOOGLE_DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || "1r20GuBnI0dxaC3n7ac3bCwkwTiCgaEnP";
 const HAS_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
 const HAS_CLOUDINARY = Boolean(CLOUDINARY_CLOUD_NAME && CLOUDINARY_API_KEY && CLOUDINARY_API_SECRET);
