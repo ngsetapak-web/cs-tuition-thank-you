@@ -8,9 +8,9 @@
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#student" aria-label="CS Tuition Centre home">
-        <img class="brand-logo" src="cs-tuition-logo-outline.png" alt="CS Tuition Centre" />
-        <span>CS Tuition Centre</span>
+      <a class="brand" href="#student" aria-label="CS Tuition home">
+        <img class="brand-logo" src="cs-tuition-logo-outline.png" alt="CS Tuition" />
+        <span>CS Tuition (Champion Scholar)</span>
       </a>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
         <span></span>
@@ -29,15 +29,16 @@
       <section id="student" class="view active">
         <section class="home-hero" aria-labelledby="home-title">
           <div class="hero-copy">
-            <p class="eyebrow">Teacher's Day Appreciation</p>
+            <p class="eyebrow">Teacher Appreciation Project <span class="zh">老师感恩计划</span></p>
             <h1 id="home-title"><span>Because of You</span><em>Project</em></h1>
-            <p class="hero-subtitle">Honouring the teachers who quietly changed lives.</p>
+            <p class="hero-subtitle">Honouring the teachers who quietly changed lives.<span class="zh">向默默改变学生生命的老师致谢。</span></p>
             <blockquote>
               “The opposite of grateful is not ungrateful. It is forgetful.”
             </blockquote>
             <p class="hero-description">
               Many teachers never truly know how deeply they impacted a student’s life. This is your
               chance to let them know.
+              <span class="zh">让老师知道，他们的付出真的被学生记得。</span>
             </p>
             <div class="hero-actions">
               <button class="primary-button" data-view="share" type="button">Share Your Story</button>
@@ -78,26 +79,26 @@
             <h2 id="preview-title">Real stories. Real impact. Real teachers.</h2>
           </div>
           <div class="story-card-row preview-row">
-            <article class="story-card">
+            <article class="story-card" data-story-type="text">
               <img src="male-secondary-student.png" alt="Male secondary student appreciation story" />
               <span class="story-tag">TEXT</span>
               <h3>Teacher BOBO helped me believe again</h3>
               <p>I used to feel nervous before BM exams, but Teacher BOBO kept guiding me patiently.</p>
               <small>Tan Kang Ming · Teacher BOBO</small>
             </article>
-            <article class="story-card">
+            <article class="story-card" data-story-type="text">
               <img src="female-secondary-student.png" alt="Female secondary student appreciation story" />
               <span class="story-tag">TEXT</span>
               <h3>She stayed patient when I wanted to give up</h3>
               <p>Ms Ong reminded me that progress takes time, and that made me keep going.</p>
               <small>Chong Xin Yin · MS ONG</small>
             </article>
-            <article class="story-card">
+            <article class="story-card" data-story-type="video">
               <img src="teacher-hug.png" alt="Students hugging and thanking a teacher" />
               <span class="story-tag">VIDEO</span>
               <h3>A short video can say what words cannot</h3>
               <p>Students can share their voice, their smile, and their thank-you in one place.</p>
-              <small>CS Tuition Student · Teacher's Day</small>
+              <small>CS Tuition Student · Appreciation Story</small>
             </article>
           </div>
         </section>
@@ -112,11 +113,9 @@
           </div>
 
           <div class="filter-tabs" aria-label="Story categories">
-            <button class="active" type="button">All Stories</button>
-            <button type="button">Videos</button>
-            <button type="button">Text Stories</button>
-            <button type="button">Teachers</button>
-            <button type="button">Moments</button>
+            <button class="active" data-story-filter="all" type="button">All Stories</button>
+            <button data-story-filter="video" type="button">Videos</button>
+            <button data-story-filter="text" type="button">Text Stories</button>
           </div>
 
           <div class="story-carousel">
@@ -159,25 +158,28 @@
             <img src="cs-tuition-logo-outline.png" alt="" />
             <ol id="form-progress">
               <li class="active">Your Story</li>
-              <li>About You</li>
-              <li>Teacher</li>
+              <li>Story</li>
+              <li>Achievement</li>
+              <li>Your Info</li>
               <li>Upload</li>
               <li>Review</li>
             </ol>
             <div class="need-help">
               <strong>Need help?</strong>
               <p>Your story can be in video or text. Whatever feels honest is enough.</p>
+              <p class="zh">可以用文字或影片表达，真诚就足够。</p>
             </div>
           </aside>
 
           <form id="story-form" class="multi-step-form">
-            <div class="mobile-progress" id="mobile-progress">Step 1 of 5</div>
+            <div class="mobile-progress" id="mobile-progress">Step 1 of 6</div>
 
             <section class="form-step active" data-step="0">
               <div class="step-intro">
                 <p class="eyebrow">Your Story</p>
                 <h1 id="share-title">Your story matters.</h1>
                 <p>Let’s remember the moment that changed everything.</p>
+                <p class="zh">写下那个让你改变的时刻。</p>
                 <img src="teacher-hug.png" alt="Teacher appreciation" />
               </div>
               <div class="step-actions single">
@@ -216,7 +218,61 @@
             </section>
 
             <section class="form-step" data-step="3">
-              <p class="step-count">3 About you and your teacher</p>
+              <p class="step-count">3 What changed in you after that?</p>
+              <label>
+                What improved? How did it change your life?
+                <small class="zh">这位老师带给你什么改变？</small>
+                <textarea
+                  name="personalChange"
+                  rows="5"
+                  placeholder="e.g. I gained confidence, improved my grades, and believed in myself."
+                  required
+                ></textarea>
+              </label>
+              <label>
+                What would you like to say to this teacher today?
+                <small>Your words will mean more than you know.</small>
+                <small class="zh">你最想对这位老师说什么？</small>
+                <textarea name="teacherMessage" rows="5" placeholder="Write your message to the teacher..." required></textarea>
+              </label>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button form-next" type="button">Next</button>
+              </div>
+            </section>
+
+            <section class="form-step" data-step="4">
+              <p class="step-count">4 Achievement before and after</p>
+              <label>
+                Share your achievement before and after
+                <small>Example: BM improved from C to A. You may type it here.</small>
+                <small class="zh">例子：BM 从 C 进步到 A。可以直接打字填写。</small>
+                <textarea
+                  name="achievementText"
+                  rows="5"
+                  placeholder="e.g. Before: BM C. After: BM A. I became more confident in writing."
+                ></textarea>
+              </label>
+              <div class="field-grid">
+                <label class="mini-upload" for="achievement-before-file">
+                  Before result photo
+                  <input id="achievement-before-file" name="achievementBeforeFile" type="file" accept="image/jpeg,image/png" />
+                  <span id="achievement-before-name">No before photo selected</span>
+                </label>
+                <label class="mini-upload" for="achievement-after-file">
+                  After result photo
+                  <input id="achievement-after-file" name="achievementAfterFile" type="file" accept="image/jpeg,image/png" />
+                  <span id="achievement-after-name">No after photo selected</span>
+                </label>
+              </div>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back</button>
+                <button class="primary-button form-next" type="button">Next</button>
+              </div>
+            </section>
+
+            <section class="form-step" data-step="5">
+              <p class="step-count">5 Your information and teacher</p>
               <div class="field-grid">
                 <label>
                   Student name
@@ -225,10 +281,6 @@
                 <label>
                   Student phone number
                   <input name="studentPhone" type="tel" placeholder="e.g. 012-3456789" required />
-                </label>
-                <label>
-                  Student email
-                  <input name="studentEmail" type="email" placeholder="e.g. student@email.com" required />
                 </label>
                 <label>
                   Year / Form
@@ -256,30 +308,8 @@
               </div>
             </section>
 
-            <section class="form-step" data-step="4">
-              <p class="step-count">4 What changed in you after that?</p>
-              <label>
-                What improved? How did it change your life?
-                <textarea
-                  name="personalChange"
-                  rows="5"
-                  placeholder="e.g. I gained confidence, improved my grades, and believed in myself."
-                  required
-                ></textarea>
-              </label>
-              <label>
-                What would you like to say to this teacher today?
-                <small>Your words will mean more than you know.</small>
-                <textarea name="teacherMessage" rows="5" placeholder="Write your message to the teacher..." required></textarea>
-              </label>
-              <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button form-next" type="button">Next</button>
-              </div>
-            </section>
-
-            <section class="form-step" data-step="5">
-              <p class="step-count">5 Upload</p>
+            <section class="form-step" data-step="6">
+              <p class="step-count">6 Upload</p>
               <div class="upload-copy">
                 <h2>Upload your video or photo</h2>
                 <p>Share your face, your voice, or a photo with your message.</p>
@@ -295,7 +325,8 @@
                 <input name="consent" type="checkbox" required />
                 <span>
                   I agree that CS Tuition may store and use this story for teacher appreciation and
-                  marketing materials.
+                  marketing materials after admin review.
+                  <span class="zh">我同意 CS Tuition 储存并在审核后使用这份故事作为老师感恩及宣传素材。</span>
                 </span>
               </label>
               <div class="step-actions">
@@ -304,7 +335,7 @@
               </div>
             </section>
 
-            <section class="form-step" data-step="6">
+            <section class="form-step" data-step="7">
               <p class="step-count">Review</p>
               <h2>Review your story before we submit it.</h2>
               <div class="review-card" id="review-card">
@@ -324,8 +355,8 @@
         <section class="thank-you-page">
           <div class="thank-you-card">
             <img src="cs-tuition-logo-outline.png" alt="" />
-            <h1>Thank You!</h1>
-            <p>Your story has been submitted. You just made a teacher’s day — maybe their life.</p>
+            <h1>Thank You! <span class="zh">谢谢你</span></h1>
+            <p>Your story has been submitted for admin review. You just made a teacher’s day — maybe their life.</p>
             <blockquote>“When one story shines, another life is inspired.”</blockquote>
             <button class="primary-button" data-view="student" type="button">Back to Home</button>
           </div>
@@ -353,7 +384,7 @@
           <div class="section-heading admin-heading">
             <div>
               <p class="eyebrow">Internal use</p>
-              <h1>Download submitted marketing素材.</h1>
+              <h1>Review and download submitted stories.</h1>
             </div>
             <div class="admin-actions">
               <button class="ghost-button" id="export-csv" type="button">Download CSV</button>
@@ -441,6 +472,8 @@
                   <th>Teacher(s)</th>
                   <th>Story</th>
                   <th>File</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody id="submission-rows"></tbody>

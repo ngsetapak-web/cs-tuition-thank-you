@@ -78,6 +78,15 @@ button {
   white-space: nowrap;
 }
 
+.zh {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.55;
+}
+
 .brand-logo {
   width: 3.3rem;
   height: 3.3rem;
@@ -285,6 +294,14 @@ main {
   color: var(--danger);
 }
 
+.compact-danger,
+.download-link {
+  min-height: 2.25rem;
+  margin: 0.12rem;
+  padding: 0 0.75rem;
+  font-size: 0.78rem;
+}
+
 .primary-button:disabled {
   cursor: not-allowed;
   opacity: 0.48;
@@ -423,6 +440,10 @@ main {
   background: #fff;
   box-shadow: 0 14px 32px rgba(7, 22, 77, 0.07);
   scroll-snap-align: start;
+}
+
+.story-card.is-hidden {
+  display: none;
 }
 
 .story-card img {
@@ -742,6 +763,26 @@ select:focus {
   font-weight: 800;
 }
 
+.mini-upload {
+  min-height: 8rem;
+  justify-content: center;
+  padding: 1rem;
+  border: 1.4px dashed rgba(242, 10, 120, 0.38);
+  border-radius: 20px;
+  background: #fffafd;
+  text-align: center;
+}
+
+.mini-upload input {
+  margin-top: 0.4rem;
+}
+
+.mini-upload span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
 .consent-row {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -877,6 +918,7 @@ select:focus {
   border: 1px solid var(--line);
   border-radius: 18px;
   background: #fffafd;
+  overflow: hidden;
 }
 
 .public-story-card .story-tag {
@@ -895,6 +937,16 @@ select:focus {
   margin-top: 0.85rem;
   color: var(--muted);
   font-weight: 800;
+}
+
+.public-story-media {
+  width: calc(100% + 2rem);
+  max-height: 18rem;
+  display: block;
+  margin: -1rem -1rem 1rem;
+  object-fit: cover;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
 }
 
 .story-count {
@@ -1112,6 +1164,17 @@ td {
 @media (max-width: 720px) {
   .site-header {
     align-items: center;
+  }
+
+  .brand {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .brand span {
+    max-width: 13rem;
+    font-size: 0.9rem;
+    line-height: 1.15;
   }
 
   .menu-toggle {

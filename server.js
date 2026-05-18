@@ -150,7 +150,8 @@ const server = http.createServer(async (req, res) => {
 
     if (url.pathname === "/api/submissions" && req.method === "GET") {
       const submissions = await readSubmissions();
-      sendJson(res, isAdmin(req) ? submissions.map(toAdminSubmission) : submissions.map(toPublicSubmission));
+      const visibleSubmissions = submissions.filter((submission) => isApprovedSubmission(submission));
+      sendJson(res, isAdmin(req) ? submissions.map(toAdminSubmission) : visibleSubmissions.map(toPublicSubmission));
       return;
     }
 
@@ -158,6 +159,28 @@ const server = http.createServer(async (req, res) => {
       const payload = await readJsonBody(req);
       const saved = await saveServerSubmission(payload);
       sendJson(res, toPublicSubmission(saved), 201);
+      return;
+    }
+
+    const submissionMatch = url.pathname.match(/^\/api\/submissions\/([^/]+)$/);
+    if (submissionMatch && req.method === "PATCH") {
+      if (!isAdmin(req)) {
+        sendJson(res, { error: "Admin login required" }, 401);
+        return;
+      }
+      const payload = await readJsonBody(req);
+      const updated = await updateSubmissionStatus(decodeURIComponent(submissionMatch[1]), payload.status);
+      sendJson(res, toAdminSubmission(updated));
+      return;
+    }
+
+    if (submissionMatch && req.method === "DELETE") {
+      if (!isAdmin(req)) {
+        sendJson(res, { error: "Admin login required" }, 401);
+        return;
+      }
+      await deleteSubmissionById(decodeURIComponent(submissionMatch[1]));
+      sendJson(res, { ok: true });
       return;
     }
 
@@ -278,14 +301,23 @@ async function saveServerSubmission(payload) {
     teachers: Array.isArray(payload.teachers) ? payload.teachers : [],
     story: payload.story || "",
     consent: Boolean(payload.consent),
-    driveStatus: payload.driveStatus || "Saved to CS Tuition server",
+    driveStatus: payload.driveStatus || "Pending review",
     video: null,
   };
 
+  const attachments = {};
   if (payload.video?.base64) {
-    submission.video = HAS_CLOUDINARY
-      ? await saveCloudinaryVideo(payload.video, submission)
-      : saveLocalVideo(payload.video, submission);
+    attachments.primary = await saveStoredFile(payload.video, submission, "primary");
+  }
+  if (Array.isArray(payload.attachments)) {
+    for (const attachment of payload.attachments) {
+      if (attachment?.base64 && attachment.key) {
+        attachments[attachment.key] = await saveStoredFile(attachment, submission, attachment.key);
+      }
+    }
+  }
+  if (Object.keys(attachments).length) {
+    submission.video = attachments;
   }
 
   if (HAS_SUPABASE) {
@@ -302,34 +334,42 @@ async function saveServerSubmission(payload) {
   return submission;
 }
 
-function saveLocalVideo(video, submission) {
-  const originalName = video.name || "video.mp4";
+function saveStoredFile(file, submission, key) {
+  return HAS_CLOUDINARY
+    ? saveCloudinaryFile(file, submission, key)
+    : saveLocalFile(file, submission, key);
+}
+
+function saveLocalFile(file, submission, key) {
+  const originalName = file.name || "upload";
   const extension = path.extname(originalName) || ".mp4";
-  const fileName = `${safeFilePart(submission.createdAt)}_${safeFilePart(submission.id)}${extension}`;
+  const fileName = `${safeFilePart(submission.createdAt)}_${safeFilePart(submission.id)}_${safeFilePart(key)}${extension}`;
   const filePath = path.join(UPLOAD_DIR, fileName);
-  fs.writeFileSync(filePath, Buffer.from(video.base64, "base64"));
+  fs.writeFileSync(filePath, Buffer.from(file.base64, "base64"));
   return {
+    key,
     name: originalName,
     fileName,
-    type: video.type || "application/octet-stream",
-    size: video.size || fs.statSync(filePath).size,
+    type: file.type || "application/octet-stream",
+    size: file.size || fs.statSync(filePath).size,
     storage: "local",
   };
 }
 
-async function saveCloudinaryVideo(video, submission) {
+async function saveCloudinaryFile(file, submission, key) {
   const timestamp = Math.floor(Date.now() / 1000);
   const folder = "cs-tuition-thank-you";
+  const publicId = `${submission.id}-${key}`;
   const signature = crypto
     .createHash("sha1")
-    .update(`folder=${folder}&public_id=${submission.id}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`)
+    .update(`folder=${folder}&public_id=${publicId}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`)
     .digest("hex");
   const form = new FormData();
-  form.append("file", `data:${video.type || "video/mp4"};base64,${video.base64}`);
+  form.append("file", `data:${file.type || "application/octet-stream"};base64,${file.base64}`);
   form.append("api_key", CLOUDINARY_API_KEY);
   form.append("timestamp", String(timestamp));
   form.append("folder", folder);
-  form.append("public_id", submission.id);
+  form.append("public_id", publicId);
   form.append("signature", signature);
 
   const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
@@ -344,10 +384,11 @@ async function saveCloudinaryVideo(video, submission) {
 
   const result = await response.json();
   return {
-    name: video.name || `${submission.id}.${result.format || "mp4"}`,
+    key,
+    name: file.name || `${publicId}.${result.format || "upload"}`,
     fileName: result.public_id,
-    type: video.type || `video/${result.format || "mp4"}`,
-    size: result.bytes || video.size || 0,
+    type: file.type || result.resource_type || "application/octet-stream",
+    size: result.bytes || file.size || 0,
     storage: "cloudinary",
     publicId: result.public_id,
     downloadUrl: result.secure_url,
@@ -357,12 +398,7 @@ async function saveCloudinaryVideo(video, submission) {
 function toAdminSubmission(submission) {
   return {
     ...submission,
-    video: submission.video
-      ? {
-          ...submission.video,
-          downloadUrl: submission.video.downloadUrl || `/uploads/${encodeURIComponent(submission.video.fileName)}`,
-        }
-      : null,
+    video: addDownloadUrls(submission.video),
   };
 }
 
@@ -374,18 +410,73 @@ function toPublicSubmission(submission) {
     grade: submission.grade,
     teachers: submission.teachers,
     story: submission.story,
-    video: submission.video?.downloadUrl
-      ? {
-          type: submission.video.type,
-          downloadUrl: submission.video.downloadUrl,
-        }
-      : submission.video
-        ? {
-            type: submission.video.type,
-            name: submission.video.name || submission.video.fileName,
-          }
-        : null,
+    school: submission.school,
+    video: publicAttachmentSummary(submission.video),
   };
+}
+
+function addDownloadUrls(value) {
+  if (!value) return null;
+  if (value.fileName || value.downloadUrl) {
+    return {
+      ...value,
+      downloadUrl: value.downloadUrl || `/uploads/${encodeURIComponent(value.fileName)}`,
+    };
+  }
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, addDownloadUrls(item)]));
+}
+
+function publicAttachmentSummary(value) {
+  if (!value) return null;
+  if (value.primary) {
+    return {
+      type: value.primary.type,
+      name: value.primary.name,
+      downloadUrl: value.primary.downloadUrl || null,
+    };
+  }
+  if (value.fileName || value.downloadUrl) {
+    return {
+      type: value.type,
+      name: value.name || value.fileName,
+      downloadUrl: value.downloadUrl || null,
+    };
+  }
+  return null;
+}
+
+function isApprovedSubmission(submission) {
+  return submission.driveStatus === "Approved";
+}
+
+async function updateSubmissionStatus(id, status) {
+  const nextStatus = status === "Approved" ? "Approved" : "Pending review";
+  if (HAS_SUPABASE) {
+    const rows = await supabaseRequest(`/submissions?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify({ drive_status: nextStatus }),
+    });
+    if (!rows[0]) throw new Error("Submission not found");
+    return fromSupabaseSubmission(rows[0]);
+  }
+
+  const submissions = await readSubmissions();
+  const submission = submissions.find((item) => item.id === id);
+  if (!submission) throw new Error("Submission not found");
+  submission.driveStatus = nextStatus;
+  writeLocalSubmissions(submissions);
+  return submission;
+}
+
+async function deleteSubmissionById(id) {
+  if (HAS_SUPABASE) {
+    await supabaseRequest(`/submissions?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+    return;
+  }
+
+  const submissions = await readSubmissions();
+  writeLocalSubmissions(submissions.filter((item) => item.id !== id));
 }
 
 function isAdmin(req) {

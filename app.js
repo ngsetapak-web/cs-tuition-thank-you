@@ -77,10 +77,15 @@ const els = {
   mobileProgress: document.querySelector("#mobile-progress"),
   reviewCard: document.querySelector("#review-card"),
   submitStoryButton: document.querySelector("#submit-story-button"),
+  storyFilterTabs: document.querySelectorAll("[data-story-filter]"),
   gradeSelect: document.querySelector("#grade-select"),
   teacherOptions: document.querySelector("#teacher-options"),
   fileInput: document.querySelector("#video-file"),
   fileName: document.querySelector("#file-name"),
+  achievementBeforeFile: document.querySelector("#achievement-before-file"),
+  achievementAfterFile: document.querySelector("#achievement-after-file"),
+  achievementBeforeName: document.querySelector("#achievement-before-name"),
+  achievementAfterName: document.querySelector("#achievement-after-name"),
   formNote: document.querySelector("#form-note"),
   clearForm: document.querySelector("#clear-form"),
   teacherStoryGroups: document.querySelector("#teacher-story-groups"),
@@ -112,6 +117,7 @@ const els = {
 };
 
 let currentFormStep = 0;
+let currentStoryFilter = "all";
 
 function loadOptions(storageKey, defaults) {
   const saved = localStorage.getItem(storageKey);
@@ -456,6 +462,7 @@ async function saveServerSubmission(submission) {
   const payload = {
     ...submission,
     video: null,
+    attachments: [],
   };
 
   if (submission.video?.blob) {
@@ -465,6 +472,18 @@ async function saveServerSubmission(submission) {
       size: submission.video.size,
       base64: await blobToBase64(submission.video.blob),
     };
+  }
+
+  if (Array.isArray(submission.attachments)) {
+    payload.attachments = await Promise.all(submission.attachments
+      .filter((attachment) => attachment.file?.size)
+      .map(async (attachment) => ({
+        key: attachment.key,
+        name: attachment.file.name,
+        type: attachment.file.type || "application/octet-stream",
+        size: attachment.file.size,
+        base64: await blobToBase64(attachment.file),
+      })));
   }
 
   const response = await fetch(`${SERVER_API_BASE}/api/submissions`, {
@@ -528,9 +547,17 @@ function getTeacherStoryGroups() {
   return teacherOptions
     .map((teacher) => ({
       teacher,
-      stories: submissions.filter((submission) => submission.teachers.includes(teacher)),
+      stories: submissions
+        .filter((submission) => submission.teachers.includes(teacher))
+        .filter(matchesCurrentStoryFilter),
     }))
     .filter((group) => group.stories.length);
+}
+
+function matchesCurrentStoryFilter(submission) {
+  if (currentStoryFilter === "video") return Boolean(submission.video);
+  if (currentStoryFilter === "text") return !submission.video;
+  return true;
 }
 
 function renderTeacherStoryGroups() {
@@ -542,7 +569,9 @@ function renderTeacherStoryGroups() {
   if (!groups.length) {
     const empty = document.createElement("p");
     empty.className = "empty-state teacher-story-empty";
-    empty.textContent = "No stories yet. Once students submit, their messages will appear here by teacher.";
+    empty.textContent = currentStoryFilter === "all"
+      ? "No approved stories yet. Once admin approves a submission, it will appear here by teacher."
+      : "No approved stories found for this filter yet.";
     els.teacherStoryGroups.append(empty);
     return;
   }
@@ -563,26 +592,54 @@ function renderTeacherStoryGroups() {
   });
 }
 
+function updateStoryFilterViews() {
+  document.querySelectorAll(".story-carousel [data-story-type]").forEach((card) => {
+    const isVisible = currentStoryFilter === "all" || card.dataset.storyType === currentStoryFilter;
+    card.classList.toggle("is-hidden", !isVisible);
+  });
+  renderTeacherStoryGroups();
+}
+
 function renderPublicStoryCard(submission) {
   const story = submission.story || "A video appreciation was shared for this teacher.";
   const student = submission.studentName || "Anonymous Student";
+  const school = submission.school || "CS Tuition Student";
   const mediaLabel = submission.video ? "VIDEO" : "TEXT";
 
   return `
     <article class="public-story-card">
+      ${renderPublicStoryMedia(submission)}
       <span class="story-tag">${mediaLabel}</span>
       <p>${escapeHtml(shortStoryPreview(story))}</p>
-      <small>${escapeHtml(student)} · ${escapeHtml(submission.grade || "CS Tuition Student")}</small>
+      <small>${escapeHtml(student)} · ${escapeHtml(school)}</small>
     </article>
   `;
 }
 
+function renderPublicStoryMedia(submission) {
+  if (!submission.video?.downloadUrl) return "";
+  const type = submission.video.type || "";
+  if (type.startsWith("video/")) {
+    return `
+      <video class="public-story-media" controls preload="metadata">
+        <source src="${escapeHtml(submission.video.downloadUrl)}" type="${escapeHtml(type)}" />
+      </video>
+    `;
+  }
+  if (type.startsWith("image/")) {
+    return `<img class="public-story-media" src="${escapeHtml(submission.video.downloadUrl)}" alt="Student uploaded appreciation" />`;
+  }
+  return "";
+}
+
 function shortStoryPreview(story) {
-  const cleaned = String(story || "")
+  const text = String(story || "");
+  const messageMatch = text.match(/Message to teacher:\s*([\s\S]*?)(?:\n\s*\n|Achievement before and after:|$)/i);
+  const cleaned = (messageMatch?.[1] || text)
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)
-    .filter((line) => !/^(Student phone|Student email|Subject):/i.test(line))
+    .filter((line) => !/^(Student phone|Subject|Before meeting this teacher|Impact moment|What changed after that|Message to teacher|Achievement before and after):/i.test(line))
     .join(" ");
   return cleaned.length > 220 ? `${cleaned.slice(0, 220).trim()}...` : cleaned;
 }
@@ -602,7 +659,7 @@ function renderAdmin() {
 
   if (!filtered.length) {
     const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="6">No submissions found for this date range.</td>`;
+    row.innerHTML = `<td colspan="8">No submissions found for this date range.</td>`;
     els.rows.append(row);
     return;
   }
@@ -621,6 +678,8 @@ function renderAdmin() {
       <td>${escapeHtml(submission.teachers.join(", "))}</td>
       <td class="story-cell">${escapeHtml(story)}</td>
       <td>${renderVideoDownload(submission)}</td>
+      <td>${escapeHtml(submission.driveStatus || "Pending review")}</td>
+      <td>${renderSubmissionActions(submission)}</td>
     `;
     els.rows.append(row);
   });
@@ -628,10 +687,39 @@ function renderAdmin() {
 
 function renderVideoDownload(submission) {
   if (!submission.video) return `<span>No file</span>`;
-  return `
-    <button class="download-link" type="button" data-download-video="${submission.id}">
-      Download File
+  const files = normalizeSubmissionFiles(submission);
+  if (!files.length) return `<span>No file</span>`;
+  return files.map((file) => `
+    <button class="download-link" type="button" data-download-video="${submission.id}" data-download-file="${escapeHtml(file.key)}">
+      Download ${escapeHtml(file.label)}
     </button>
+  `).join("");
+}
+
+function normalizeSubmissionFiles(submission) {
+  if (!submission.video) return [];
+  const labelMap = {
+    primary: "Story File",
+    achievementBefore: "Before Result",
+    achievementAfter: "After Result",
+  };
+  if (submission.video.downloadUrl || submission.video.blob || submission.video.fileName) {
+    return [{ key: "primary", label: "Story File", file: submission.video }];
+  }
+  return Object.entries(submission.video)
+    .filter(([, file]) => file)
+    .map(([key, file]) => ({
+      key,
+      label: labelMap[key] || "File",
+      file,
+    }));
+}
+
+function renderSubmissionActions(submission) {
+  const isApproved = submission.driveStatus === "Approved";
+  return `
+    ${isApproved ? "" : `<button class="download-link" type="button" data-approve-submission="${submission.id}">Approve</button>`}
+    <button class="danger-button compact-danger" type="button" data-delete-submission="${submission.id}">Delete</button>
   `;
 }
 
@@ -690,8 +778,7 @@ function buildExportRows() {
     school: submission.school,
     teachers: submission.teachers.join("; "),
     story: submission.story,
-    videoFileName: submission.video?.name || submission.video?.fileName || "",
-    videoType: submission.video?.type || "",
+    files: normalizeSubmissionFiles(submission).map((item) => item.file.name || item.file.fileName || item.key).join("; "),
     driveFolderId: DRIVE_FOLDER_ID,
     driveStatus: submission.driveStatus || "Local only",
     consent: submission.consent ? "Yes" : "No",
@@ -737,8 +824,7 @@ function exportCsv() {
     school: "",
     teachers: "",
     story: "",
-    videoFileName: "",
-    videoType: "",
+    files: "",
     consent: "",
   });
 
@@ -753,13 +839,14 @@ function exportCsv() {
   );
 }
 
-function videoFilename(submission) {
-  const originalName = submission.video.name || submission.video.fileName || "video.mp4";
+function videoFilename(submission, file = submission.video) {
+  const originalName = file.name || file.fileName || "upload";
   const extension = originalName.includes(".")
     ? originalName.split(".").pop()
-    : "mp4";
+    : "file";
   const safeName = submission.studentName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  return `${safeName || "student"}-cs-tuition-thank-you-video.${extension}`;
+  const safeKey = (file.key || "story").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return `${safeName || "student"}-${safeKey || "story"}.${extension}`;
 }
 
 async function uploadSubmissionToDrive(submission) {
@@ -783,6 +870,7 @@ async function uploadSubmissionToDrive(submission) {
       consent: submission.consent,
     },
     video: null,
+    attachments: [],
   };
 
   if (submission.video?.blob) {
@@ -791,6 +879,17 @@ async function uploadSubmissionToDrive(submission) {
       type: submission.video.type,
       base64: await blobToBase64(submission.video.blob),
     };
+  }
+
+  if (Array.isArray(submission.attachments)) {
+    payload.attachments = await Promise.all(submission.attachments
+      .filter((attachment) => attachment.file?.size)
+      .map(async (attachment) => ({
+        key: attachment.key,
+        name: attachment.file.name,
+        type: attachment.file.type,
+        base64: await blobToBase64(attachment.file),
+      })));
   }
 
   const response = await fetch(DRIVE_UPLOAD_ENDPOINT, {
@@ -860,22 +959,24 @@ function showFormStep(step) {
     item.classList.toggle("active", index === currentFormStep);
   });
 
-  const progressIndex = currentFormStep <= 2
+  const progressIndex = currentFormStep === 0
     ? 0
-    : currentFormStep === 3
-      ? 2
+    : currentFormStep <= 3
+      ? 1
       : currentFormStep === 4
-        ? 0
-        : currentFormStep === 5
-          ? 3
-          : 4;
+      ? 2
+      : currentFormStep === 5
+        ? 3
+        : currentFormStep === 6
+          ? 4
+          : 5;
 
   els.formProgress?.querySelectorAll("li").forEach((item, index) => {
     item.classList.toggle("active", index === progressIndex);
   });
 
   if (els.mobileProgress) {
-    els.mobileProgress.textContent = `Step ${Math.min(currentFormStep + 1, 5)} of 5`;
+    els.mobileProgress.textContent = `Step ${Math.min(currentFormStep + 1, 6)} of 6`;
   }
 
   if (currentFormStep === els.formSteps.length - 1) {
@@ -899,7 +1000,8 @@ function validateCurrentStep() {
     }
   }
 
-  if (currentFormStep === 3 && !getSelectedTeachers().length) {
+  const currentStep = els.formSteps[currentFormStep];
+  if (currentStep?.querySelector("#teacher-options") && !getSelectedTeachers().length) {
     window.alert("Please choose at least one teacher.");
     return false;
   }
@@ -914,7 +1016,6 @@ function getSelectedTeachers() {
 function buildStoryText(data) {
   return [
     `Student phone: ${String(data.get("studentPhone") || "").trim()}`,
-    `Student email: ${String(data.get("studentEmail") || "").trim()}`,
     `Subject: ${String(data.get("subject") || "").trim()}`,
     "",
     "Before meeting this teacher:",
@@ -928,6 +1029,9 @@ function buildStoryText(data) {
     "",
     "Message to teacher:",
     String(data.get("teacherMessage") || "").trim(),
+    "",
+    "Achievement before and after:",
+    String(data.get("achievementText") || "").trim(),
   ].join("\n");
 }
 
@@ -943,8 +1047,9 @@ function renderReview() {
       <span>Teacher: ${escapeHtml(teachers.join(", ") || "-")}</span>
       <span>Year / Form: ${escapeHtml(data.get("grade") || "-")}</span>
       <span>Subject: ${escapeHtml(data.get("subject") || "-")}</span>
-      <span>Email: ${escapeHtml(data.get("studentEmail") || "-")}</span>
       <span>Upload: ${escapeHtml(fileName)}</span>
+      <span>Achievement before: ${escapeHtml(els.achievementBeforeFile?.files[0]?.name || "No photo")}</span>
+      <span>Achievement after: ${escapeHtml(els.achievementAfterFile?.files[0]?.name || "No photo")}</span>
     </div>
     <div>
       <h3>Student story preview</h3>
@@ -977,14 +1082,32 @@ els.form?.addEventListener("input", () => {
   if (currentFormStep === els.formSteps.length - 1) renderReview();
 });
 
+els.storyFilterTabs.forEach((button) => {
+  button.addEventListener("click", () => {
+    currentStoryFilter = button.dataset.storyFilter;
+    els.storyFilterTabs.forEach((item) => item.classList.toggle("active", item === button));
+    updateStoryFilterViews();
+  });
+});
+
 els.fileInput.addEventListener("change", () => {
   els.fileName.textContent = els.fileInput.files[0]?.name || "No file selected";
   updateSubmitButton();
 });
 
+els.achievementBeforeFile?.addEventListener("change", () => {
+  els.achievementBeforeName.textContent = els.achievementBeforeFile.files[0]?.name || "No before photo selected";
+});
+
+els.achievementAfterFile?.addEventListener("change", () => {
+  els.achievementAfterName.textContent = els.achievementAfterFile.files[0]?.name || "No after photo selected";
+});
+
 els.clearForm?.addEventListener("click", () => {
   els.form.reset();
   els.fileName.textContent = "No file selected";
+  if (els.achievementBeforeName) els.achievementBeforeName.textContent = "No before photo selected";
+  if (els.achievementAfterName) els.achievementAfterName.textContent = "No after photo selected";
   els.formNote.textContent = "";
 });
 
@@ -1073,24 +1196,32 @@ els.form.addEventListener("submit", async (event) => {
     teachers,
     story,
     consent: data.get("consent") === "on",
+    driveStatus: "Pending review",
     video: videoFile && videoFile.size ? {
       name: videoFile.name,
       type: videoFile.type || "application/octet-stream",
       size: videoFile.size,
       blob: videoFile,
     } : null,
+    attachments: [
+      { key: "achievementBefore", file: data.get("achievementBeforeFile") },
+      { key: "achievementAfter", file: data.get("achievementAfterFile") },
+    ],
   };
 
   let savedSubmission = submission;
   try {
-    savedSubmission = await uploadSubmissionToDrive(submission);
+    savedSubmission = {
+      ...(await uploadSubmissionToDrive(submission)),
+      driveStatus: "Pending review",
+    };
     els.formNote.innerHTML = `<span class="success">Submitted and synced to Drive.</span>`;
   } catch (error) {
     savedSubmission = {
       ...submission,
-      driveStatus: `Drive sync failed - ${error.message}`,
+      driveStatus: "Pending review",
     };
-    els.formNote.textContent = "Submitted locally, but Drive sync failed. Please check the endpoint.";
+    els.formNote.textContent = "Submitted for review, but Drive sync failed. Please check the endpoint.";
   }
 
   try {
@@ -1104,9 +1235,11 @@ els.form.addEventListener("submit", async (event) => {
 
   els.form.reset();
   els.fileName.textContent = "No file selected";
+  if (els.achievementBeforeName) els.achievementBeforeName.textContent = "No before photo selected";
+  if (els.achievementAfterName) els.achievementAfterName.textContent = "No after photo selected";
   showFormStep(0);
   if (serverMode) {
-    els.formNote.innerHTML = `<span class="success">Submitted. Your story is now part of the Stories Wall.</span>`;
+    els.formNote.innerHTML = `<span class="success">Submitted for admin review. Your story will appear after approval.</span>`;
   } else if (!DRIVE_UPLOAD_ENDPOINT) {
     els.formNote.innerHTML = `<span class="success">Submitted locally. This browser-only mode will not update other devices.</span>`;
   }
@@ -1116,40 +1249,96 @@ els.form.addEventListener("submit", async (event) => {
 
 els.rows.addEventListener("click", (event) => {
   if (!requireAdminAccess()) return;
+  const approveButton = event.target.closest("[data-approve-submission]");
+  if (approveButton) {
+    approveSubmission(approveButton.dataset.approveSubmission);
+    return;
+  }
+
+  const deleteButton = event.target.closest("[data-delete-submission]");
+  if (deleteButton) {
+    deleteSubmission(deleteButton.dataset.deleteSubmission);
+    return;
+  }
+
   const button = event.target.closest("[data-download-video]");
   if (!button) return;
 
   const submission = submissions.find((item) => item.id === button.dataset.downloadVideo);
   if (!submission?.video) return;
+  const file = normalizeSubmissionFiles(submission).find((item) => item.key === button.dataset.downloadFile)?.file;
+  if (!file) return;
 
-  if (submission.video.downloadUrl) {
-    downloadUrl(submission.video.downloadUrl, videoFilename(submission));
+  if (file.downloadUrl) {
+    downloadUrl(file.downloadUrl, videoFilename(submission, file));
     return;
   }
 
-  if (submission.video.blob) {
-    downloadBlob(submission.video.blob, videoFilename(submission));
+  if (file.blob) {
+    downloadBlob(file.blob, videoFilename(submission, file));
   }
 });
+
+async function approveSubmission(id) {
+  if (!serverMode) {
+    const submission = submissions.find((item) => item.id === id);
+    if (!submission) return;
+    submission.driveStatus = "Approved";
+    await saveSubmission(submission);
+    await refresh();
+    return;
+  }
+
+  await fetch(`${SERVER_API_BASE}/api/submissions/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: JSON.stringify({ status: "Approved" }),
+  });
+  await refresh();
+}
+
+async function deleteSubmission(id) {
+  const confirmed = window.prompt("Type confirm delete to delete this story.");
+  if (confirmed !== "confirm delete") return;
+
+  if (!serverMode) {
+    await new Promise((resolve, reject) => {
+      const request = dbTransaction("readwrite").delete(id);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+    await refresh();
+    return;
+  }
+
+  await fetch(`${SERVER_API_BASE}/api/submissions/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    credentials: "same-origin",
+  });
+  await refresh();
+}
 
 els.exportCsv.addEventListener("click", exportCsv);
 els.exportJson.addEventListener("click", exportJson);
 els.downloadAllVideos.addEventListener("click", () => {
   if (!requireAdminAccess()) return;
-  const videos = getFilteredSubmissions().filter((submission) => submission.video?.blob);
+  const videos = getFilteredSubmissions().flatMap((submission) => normalizeSubmissionFiles(submission).map((file) => ({ submission, ...file })));
   if (!videos.length) {
-    window.alert("No videos found for this date range.");
+    window.alert("No files found for this date range.");
     return;
   }
 
-  videos.forEach((submission, index) => {
+  videos.forEach((item, index) => {
     window.setTimeout(() => {
-      if (submission.video.downloadUrl) {
-        downloadUrl(submission.video.downloadUrl, videoFilename(submission));
+      if (item.file.downloadUrl) {
+        downloadUrl(item.file.downloadUrl, videoFilename(item.submission, item.file));
         return;
       }
 
-      downloadBlob(submission.video.blob, videoFilename(submission));
+      if (item.file.blob) {
+        downloadBlob(item.file.blob, videoFilename(item.submission, item.file));
+      }
     }, index * 450);
   });
 });
