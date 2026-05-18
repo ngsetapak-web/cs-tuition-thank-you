@@ -2,7 +2,7 @@ const DB_NAME = "cs-tuition-stories";
 const DB_VERSION = 1;
 const STORE_NAME = "submissions";
 const DRIVE_FOLDER_ID = "1r20GuBnI0dxaC3n7ac3bCwkwTiCgaEnP";
-const DRIVE_UPLOAD_ENDPOINT = "";
+const DRIVE_UPLOAD_ENDPOINT = "https://script.google.com/a/macros/cstuition.com.my/s/AKfycbzZmcB2I_ZdFNhAOBcp9U0JDCcUOaJOfFn6UJ8wDwPTqAG4DjxSDa7pvKxxo_0-t09NyA/exec";
 const ADMIN_SESSION_KEY = "cs-tuition-admin-unlocked";
 const GRADE_OPTIONS_KEY = "cs-tuition-grade-options";
 const TEACHER_OPTIONS_KEY = "cs-tuition-teacher-options";
@@ -1022,9 +1022,11 @@ async function uploadSubmissionToDrive(submission) {
       id: submission.id,
       createdAt: new Date(submission.createdAt).toISOString(),
       studentName: submission.studentName,
+      studentPhone: submission.studentPhone,
       grade: submission.grade,
       school: submission.school,
       teachers: submission.teachers,
+      subject: submission.subject,
       story: submission.story,
       consent: submission.consent,
     },
@@ -1350,9 +1352,11 @@ els.form.addEventListener("submit", async (event) => {
     id: crypto.randomUUID(),
     createdAt: Date.now(),
     studentName: String(data.get("studentName")).trim(),
+    studentPhone: String(data.get("studentPhone")).trim(),
     grade: String(data.get("grade")).trim(),
     school: String(data.get("school")).trim(),
     teachers,
+    subject: String(data.get("subject")).trim(),
     story,
     consent: data.get("consent") === "on",
     driveStatus: "Pending review",
