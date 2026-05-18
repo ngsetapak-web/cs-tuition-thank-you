@@ -96,6 +96,10 @@ const els = {
   adminPassword: document.querySelector("#admin-password"),
   adminLoginNote: document.querySelector("#admin-login-note"),
   adminLogout: document.querySelector("#admin-logout"),
+  adminReviewModal: document.querySelector("#admin-review-modal"),
+  adminReviewBody: document.querySelector("#admin-review-body"),
+  adminReviewActions: document.querySelector("#admin-review-actions"),
+  adminReviewClose: document.querySelector("#admin-review-close"),
   exportCsv: document.querySelector("#export-csv"),
   exportJson: document.querySelector("#export-json"),
   downloadAllVideos: document.querySelector("#download-all-videos"),
@@ -718,9 +722,103 @@ function normalizeSubmissionFiles(submission) {
 function renderSubmissionActions(submission) {
   const isApproved = submission.driveStatus === "Approved";
   return `
+    <button class="download-link" type="button" data-review-submission="${submission.id}">Review</button>
     ${isApproved ? "" : `<button class="download-link" type="button" data-approve-submission="${submission.id}">Approve</button>`}
     <button class="danger-button compact-danger" type="button" data-delete-submission="${submission.id}">Delete</button>
   `;
+}
+
+function parseStorySections(story) {
+  const labels = [
+    "Student phone",
+    "Subject",
+    "Before meeting this teacher",
+    "Impact moment",
+    "What changed after that",
+    "Message to teacher",
+    "Achievement before and after",
+  ];
+  const sections = {};
+  let currentLabel = "";
+
+  String(story || "").split("\n").forEach((line) => {
+    const trimmed = line.trim();
+    const matchedLabel = labels.find((label) => trimmed.toLowerCase() === `${label}:`.toLowerCase());
+    if (matchedLabel) {
+      currentLabel = matchedLabel;
+      sections[currentLabel] = "";
+      return;
+    }
+
+    const inlineLabel = labels.find((label) => trimmed.toLowerCase().startsWith(`${label}:`.toLowerCase()));
+    if (inlineLabel) {
+      currentLabel = inlineLabel;
+      sections[currentLabel] = trimmed.slice(inlineLabel.length + 1).trim();
+      return;
+    }
+
+    if (currentLabel && trimmed) {
+      sections[currentLabel] = `${sections[currentLabel] ? `${sections[currentLabel]}\n` : ""}${trimmed}`;
+    }
+  });
+
+  return sections;
+}
+
+function openAdminReview(id) {
+  const submission = submissions.find((item) => item.id === id);
+  if (!submission || !els.adminReviewModal) return;
+
+  const sections = parseStorySections(submission.story);
+  const isApproved = submission.driveStatus === "Approved";
+  els.adminReviewBody.innerHTML = `
+    <div class="admin-review-meta">
+      <span><strong>Student</strong>${escapeHtml(submission.studentName || "-")}</span>
+      <span><strong>School</strong>${escapeHtml(submission.school || "-")}</span>
+      <span><strong>Year / Form</strong>${escapeHtml(submission.grade || "-")}</span>
+      <span><strong>Teacher(s)</strong>${escapeHtml(submission.teachers?.join(", ") || "-")}</span>
+      <span><strong>Status</strong>${escapeHtml(submission.driveStatus || "Pending review")}</span>
+      <span><strong>Submitted</strong>${escapeHtml(formatDate(submission.createdAt))}</span>
+    </div>
+    <div class="admin-review-story">
+      ${renderReviewSection("Student phone", sections["Student phone"])}
+      ${renderReviewSection("Subject", sections.Subject)}
+      ${renderReviewSection("Before meeting this teacher", sections["Before meeting this teacher"])}
+      ${renderReviewSection("Impact moment", sections["Impact moment"])}
+      ${renderReviewSection("What changed after that", sections["What changed after that"])}
+      ${renderReviewSection("Message to teacher", sections["Message to teacher"])}
+      ${renderReviewSection("Achievement before and after", sections["Achievement before and after"])}
+    </div>
+    <div class="admin-review-files">
+      <h3>Uploaded files</h3>
+      ${renderReviewFiles(submission)}
+    </div>
+  `;
+  els.adminReviewActions.innerHTML = `
+    ${isApproved ? "" : `<button class="primary-button" type="button" data-modal-approve="${submission.id}">Approve story</button>`}
+    <button class="danger-button" type="button" data-modal-delete="${submission.id}">Delete story</button>
+  `;
+  els.adminReviewModal.showModal();
+}
+
+function renderReviewSection(label, value) {
+  if (!value) return "";
+  return `
+    <section>
+      <h3>${escapeHtml(label)}</h3>
+      <p>${escapeHtml(value)}</p>
+    </section>
+  `;
+}
+
+function renderReviewFiles(submission) {
+  const files = normalizeSubmissionFiles(submission);
+  if (!files.length) return `<p>No uploaded files.</p>`;
+  return files.map((item) => `
+    <button class="download-link" type="button" data-download-video="${submission.id}" data-download-file="${escapeHtml(item.key)}">
+      Download ${escapeHtml(item.label)}
+    </button>
+  `).join("");
 }
 
 function renderAll() {
@@ -1249,6 +1347,12 @@ els.form.addEventListener("submit", async (event) => {
 
 els.rows.addEventListener("click", (event) => {
   if (!requireAdminAccess()) return;
+  const reviewButton = event.target.closest("[data-review-submission]");
+  if (reviewButton) {
+    openAdminReview(reviewButton.dataset.reviewSubmission);
+    return;
+  }
+
   const approveButton = event.target.closest("[data-approve-submission]");
   if (approveButton) {
     approveSubmission(approveButton.dataset.approveSubmission);
@@ -1268,6 +1372,44 @@ els.rows.addEventListener("click", (event) => {
   if (!submission?.video) return;
   const file = normalizeSubmissionFiles(submission).find((item) => item.key === button.dataset.downloadFile)?.file;
   if (!file) return;
+
+  if (file.downloadUrl) {
+    downloadUrl(file.downloadUrl, videoFilename(submission, file));
+    return;
+  }
+
+  if (file.blob) {
+    downloadBlob(file.blob, videoFilename(submission, file));
+  }
+});
+
+els.adminReviewClose?.addEventListener("click", () => {
+  els.adminReviewModal.close();
+});
+
+els.adminReviewActions?.addEventListener("click", (event) => {
+  const approveButton = event.target.closest("[data-modal-approve]");
+  if (approveButton) {
+    els.adminReviewModal.close();
+    approveSubmission(approveButton.dataset.modalApprove);
+    return;
+  }
+
+  const deleteButton = event.target.closest("[data-modal-delete]");
+  if (deleteButton) {
+    els.adminReviewModal.close();
+    deleteSubmission(deleteButton.dataset.modalDelete);
+  }
+});
+
+els.adminReviewBody?.addEventListener("click", (event) => {
+  if (!requireAdminAccess()) return;
+  const button = event.target.closest("[data-download-video]");
+  if (!button) return;
+
+  const submission = submissions.find((item) => item.id === button.dataset.downloadVideo);
+  const file = submission ? normalizeSubmissionFiles(submission).find((item) => item.key === button.dataset.downloadFile)?.file : null;
+  if (!submission || !file) return;
 
   if (file.downloadUrl) {
     downloadUrl(file.downloadUrl, videoFilename(submission, file));

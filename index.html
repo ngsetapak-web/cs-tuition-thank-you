@@ -157,12 +157,12 @@
           <aside class="progress-sidebar" aria-label="Story progress">
             <img src="cs-tuition-logo-outline.png" alt="" />
             <ol id="form-progress">
-              <li class="active">Your Story</li>
-              <li>Story</li>
-              <li>Achievement</li>
-              <li>Your Info</li>
-              <li>Upload</li>
-              <li>Review</li>
+              <li class="active">Your Story <span class="zh">你的故事</span></li>
+              <li>Story <span class="zh">感恩内容</span></li>
+              <li>Achievement <span class="zh">进步成果</span></li>
+              <li>Upload <span class="zh">上传文件</span></li>
+              <li>Your Info <span class="zh">学生资料</span></li>
+              <li>Review <span class="zh">检查提交</span></li>
             </ol>
             <div class="need-help">
               <strong>Need help?</strong>
@@ -183,49 +183,51 @@
                 <img src="teacher-hug.png" alt="Teacher appreciation" />
               </div>
               <div class="step-actions single">
-                <button class="primary-button form-next" type="button">Start Your Story</button>
+                <button class="primary-button form-next" type="button">Start Your Story <span class="zh">开始填写</span></button>
               </div>
             </section>
 
             <section class="form-step" data-step="1">
-              <p class="step-count">1 Before meeting this teacher</p>
+              <p class="step-count">1 Before meeting this teacher <span class="zh">遇见这位老师之前</span></p>
               <label>
                 Before meeting this teacher, what challenges were you facing at that time?
+                <small class="zh">在遇见这位老师之前，你当时面对什么困难或挑战？</small>
                 <textarea
                   name="storyBefore"
                   rows="6"
-                  placeholder="e.g. I lacked confidence in Math and was afraid of exams."
+                  placeholder="e.g. I lacked confidence in Math and was afraid of exams. / 例：我对数学没有信心，也很害怕考试。"
                   required
                 ></textarea>
               </label>
               <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button form-next" type="button">Next</button>
+                <button class="ghost-button form-back" type="button">Back <span class="zh">返回</span></button>
+                <button class="primary-button form-next" type="button">Next <span class="zh">下一步</span></button>
               </div>
             </section>
 
             <section class="form-step" data-step="2">
-              <p class="step-count">2 Impact moment</p>
+              <p class="step-count">2 Impact moment <span class="zh">让你印象深刻的时刻</span></p>
               <label>
                 What did this teacher do or say that impacted you?
                 <small>A moment, a line, an act of kindness — something you’ll never forget.</small>
-                <textarea name="impactMoment" rows="6" placeholder="Share that moment..." required></textarea>
+                <small class="zh">这位老师做了什么或说了什么，让你一直记得？</small>
+                <textarea name="impactMoment" rows="6" placeholder="Share that moment... / 写下那个让你感动的时刻..." required></textarea>
               </label>
               <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button form-next" type="button">Next</button>
+                <button class="ghost-button form-back" type="button">Back <span class="zh">返回</span></button>
+                <button class="primary-button form-next" type="button">Next <span class="zh">下一步</span></button>
               </div>
             </section>
 
             <section class="form-step" data-step="3">
-              <p class="step-count">3 What changed in you after that?</p>
+              <p class="step-count">3 What changed in you after that? <span class="zh">之后你有什么改变？</span></p>
               <label>
                 What improved? How did it change your life?
                 <small class="zh">这位老师带给你什么改变？</small>
                 <textarea
                   name="personalChange"
                   rows="5"
-                  placeholder="e.g. I gained confidence, improved my grades, and believed in myself."
+                  placeholder="e.g. I gained confidence, improved my grades, and believed in myself. / 例：我变得更有信心，成绩进步，也更相信自己。"
                   required
                 ></textarea>
               </label>
@@ -233,16 +235,16 @@
                 What would you like to say to this teacher today?
                 <small>Your words will mean more than you know.</small>
                 <small class="zh">你最想对这位老师说什么？</small>
-                <textarea name="teacherMessage" rows="5" placeholder="Write your message to the teacher..." required></textarea>
+                <textarea name="teacherMessage" rows="5" placeholder="Write your message to the teacher... / 写下你想对老师说的话..." required></textarea>
               </label>
               <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button form-next" type="button">Next</button>
+                <button class="ghost-button form-back" type="button">Back <span class="zh">返回</span></button>
+                <button class="primary-button form-next" type="button">Next <span class="zh">下一步</span></button>
               </div>
             </section>
 
             <section class="form-step" data-step="4">
-              <p class="step-count">4 Achievement before and after</p>
+              <p class="step-count">4 Achievement before and after <span class="zh">进步前后对比</span></p>
               <label>
                 Share your achievement before and after
                 <small>Example: BM improved from C to A. You may type it here.</small>
@@ -250,75 +252,42 @@
                 <textarea
                   name="achievementText"
                   rows="5"
-                  placeholder="e.g. Before: BM C. After: BM A. I became more confident in writing."
+                  placeholder="e.g. Before: BM C. After: BM A. / 例：之前 BM C，之后 BM A。"
                 ></textarea>
               </label>
               <div class="field-grid">
                 <label class="mini-upload" for="achievement-before-file">
                   Before result photo
+                  <small class="zh">进步前成绩照片</small>
                   <input id="achievement-before-file" name="achievementBeforeFile" type="file" accept="image/jpeg,image/png" />
                   <span id="achievement-before-name">No before photo selected</span>
                 </label>
                 <label class="mini-upload" for="achievement-after-file">
                   After result photo
+                  <small class="zh">进步后成绩照片</small>
                   <input id="achievement-after-file" name="achievementAfterFile" type="file" accept="image/jpeg,image/png" />
                   <span id="achievement-after-name">No after photo selected</span>
                 </label>
               </div>
               <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button form-next" type="button">Next</button>
+                <button class="ghost-button form-back" type="button">Back <span class="zh">返回</span></button>
+                <button class="primary-button form-next" type="button">Next <span class="zh">下一步</span></button>
               </div>
             </section>
 
             <section class="form-step" data-step="5">
-              <p class="step-count">5 Your information and teacher</p>
-              <div class="field-grid">
-                <label>
-                  Student name
-                  <input name="studentName" type="text" placeholder="e.g. Tan Mei Xin" required />
-                </label>
-                <label>
-                  Student phone number
-                  <input name="studentPhone" type="tel" placeholder="e.g. 012-3456789" required />
-                </label>
-                <label>
-                  Year / Form
-                  <select id="grade-select" name="grade" required>
-                    <option value="">Choose year / form</option>
-                  </select>
-                </label>
-                <label>
-                  Subject
-                  <input name="subject" type="text" placeholder="e.g. BM, Math, Science" required />
-                </label>
-                <label>
-                  School
-                  <input name="school" type="text" placeholder="e.g. SMK Seri Mutiara" required />
-                </label>
-              </div>
-              <fieldset class="choice-field">
-                <legend>Teacher name</legend>
-                <div class="teacher-options" id="teacher-options"></div>
-                <p class="field-help">You can choose one or more teachers.</p>
-              </fieldset>
-              <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button form-next" type="button">Next</button>
-              </div>
-            </section>
-
-            <section class="form-step" data-step="6">
-              <p class="step-count">6 Upload</p>
+              <p class="step-count">5 Upload <span class="zh">上传影片或照片</span></p>
               <div class="upload-copy">
                 <h2>Upload your video or photo</h2>
                 <p>Share your face, your voice, or a photo with your message.</p>
+                <p class="zh">你可以上传影片、声音、照片，或只提交文字也可以。</p>
               </div>
               <label class="upload-box" for="video-file">
                 <input id="video-file" name="video" type="file" accept="video/*,image/jpeg,image/png" />
                 <span class="upload-icon" aria-hidden="true">+</span>
                 <strong>Drag & drop your video or photo here</strong>
                 <small>MP4, MOV, JPG, or PNG. Upload is optional.</small>
+                <small class="zh">可上传影片或照片；如果只写文字也可以。</small>
                 <em id="file-name">No file selected</em>
               </label>
               <label class="consent-row">
@@ -330,20 +299,62 @@
                 </span>
               </label>
               <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button form-next" type="button">Review Story</button>
+                <button class="ghost-button form-back" type="button">Back <span class="zh">返回</span></button>
+                <button class="primary-button form-next" type="button">Next <span class="zh">下一步</span></button>
+              </div>
+            </section>
+
+            <section class="form-step" data-step="6">
+              <p class="step-count">6 Your information and teacher <span class="zh">学生资料和老师资料</span></p>
+              <div class="field-grid">
+                <label>
+                  Student name
+                  <small class="zh">学生姓名</small>
+                  <input name="studentName" type="text" placeholder="e.g. Tan Mei Xin" required />
+                </label>
+                <label>
+                  Student phone number
+                  <small class="zh">学生电话号码</small>
+                  <input name="studentPhone" type="tel" placeholder="e.g. 012-3456789" required />
+                </label>
+                <label>
+                  Year / Form
+                  <small class="zh">年级 / 中学年级</small>
+                  <select id="grade-select" name="grade" required>
+                    <option value="">Choose year / form</option>
+                  </select>
+                </label>
+                <label>
+                  Subject
+                  <small class="zh">科目</small>
+                  <input name="subject" type="text" placeholder="e.g. BM, Math, Science" required />
+                </label>
+                <label>
+                  School
+                  <small class="zh">学校</small>
+                  <input name="school" type="text" placeholder="e.g. SMK Seri Mutiara" required />
+                </label>
+              </div>
+              <fieldset class="choice-field">
+                <legend>Teacher name</legend>
+                <div class="teacher-options" id="teacher-options"></div>
+                <p class="field-help">You can choose one or more teachers.<span class="zh">可以选择一位或多位老师。</span></p>
+              </fieldset>
+              <div class="step-actions">
+                <button class="ghost-button form-back" type="button">Back <span class="zh">返回</span></button>
+                <button class="primary-button form-next" type="button">Review Story <span class="zh">检查内容</span></button>
               </div>
             </section>
 
             <section class="form-step" data-step="7">
-              <p class="step-count">Review</p>
-              <h2>Review your story before we submit it.</h2>
+              <p class="step-count">Review <span class="zh">检查内容</span></p>
+              <h2>Review your story before we submit it.<span class="zh">提交前，请先检查你的故事内容。</span></h2>
               <div class="review-card" id="review-card">
                 <p>Your story preview will appear here.</p>
               </div>
               <div class="step-actions">
-                <button class="ghost-button form-back" type="button">Back</button>
-                <button class="primary-button" id="submit-story-button" type="submit" disabled>Submit Story</button>
+                <button class="ghost-button form-back" type="button">Back <span class="zh">返回</span></button>
+                <button class="primary-button" id="submit-story-button" type="submit" disabled>Submit Story <span class="zh">提交故事</span></button>
               </div>
               <p class="form-note" id="form-note" role="status"></p>
             </section>
@@ -482,6 +493,18 @@
         </div>
       </section>
     </main>
+
+    <dialog class="admin-review-modal" id="admin-review-modal">
+      <div class="admin-review-header">
+        <div>
+          <p class="eyebrow">Admin Review</p>
+          <h2>Review student story</h2>
+        </div>
+        <button class="ghost-button compact-button" id="admin-review-close" type="button">Close</button>
+      </div>
+      <div class="admin-review-body" id="admin-review-body"></div>
+      <div class="admin-review-actions" id="admin-review-actions"></div>
+    </dialog>
 
     <template id="empty-state-template">
       <li class="empty-state">No stories yet. Student messages will appear after they submit.</li>

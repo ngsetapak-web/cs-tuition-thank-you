@@ -542,6 +542,7 @@ main {
   margin: 0;
   padding: 0;
   list-style: none;
+  counter-reset: story-step;
 }
 
 .progress-sidebar li {
@@ -555,7 +556,8 @@ main {
 }
 
 .progress-sidebar li::before {
-  content: counter(list-item);
+  counter-increment: story-step;
+  content: counter(story-step);
   display: grid;
   width: 1.7rem;
   height: 1.7rem;
@@ -567,6 +569,20 @@ main {
 
 .progress-sidebar li.active {
   color: #fff;
+}
+
+.progress-sidebar li .zh {
+  margin-top: 0.05rem;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.68rem;
+}
+
+.primary-button .zh,
+.ghost-button .zh {
+  margin-top: 0;
+  margin-left: 0.35rem;
+  font-size: 0.72em;
+  font-weight: 700;
 }
 
 .progress-sidebar li.active::before {
@@ -1113,6 +1129,95 @@ td {
 .story-cell {
   max-width: 28rem;
   white-space: pre-wrap;
+}
+
+.admin-review-modal {
+  width: min(860px, calc(100% - 2rem));
+  max-height: min(86vh, 760px);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 30px 80px rgba(7, 22, 77, 0.24);
+}
+
+.admin-review-modal::backdrop {
+  background: rgba(7, 22, 77, 0.45);
+}
+
+.admin-review-header,
+.admin-review-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-review-actions {
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+}
+
+.admin-review-header h2 {
+  margin: 0;
+  color: var(--primary);
+}
+
+.admin-review-body {
+  display: grid;
+  gap: 1rem;
+  max-height: 56vh;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.admin-review-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.admin-review-meta span,
+.admin-review-story section,
+.admin-review-files {
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fffafd;
+}
+
+.admin-review-meta strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--primary);
+}
+
+.admin-review-story {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-review-story h3,
+.admin-review-files h3 {
+  margin: 0 0 0.45rem;
+  color: var(--primary);
+}
+
+.admin-review-story p,
+.admin-review-files p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.compact-button {
+  min-height: 2.35rem;
+  padding: 0 0.85rem;
 }
 
 .form-note {
