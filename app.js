@@ -608,7 +608,7 @@ function renderPublicStoryCard(submission) {
   const story = buildPublicStoryPreview(submission.story) || "A video appreciation was shared for this teacher.";
   const student = submission.studentName || "Anonymous Student";
   const school = submission.school || "CS Tuition Student";
-  const mediaLabel = submission.video ? "VIDEO" : "TEXT";
+  const mediaLabel = getPublicStoryMediaLabel(submission);
 
   return `
     <article class="public-story-card">
@@ -634,6 +634,13 @@ function renderPublicStoryMedia(submission) {
     return `<img class="public-story-media" src="${escapeHtml(submission.video.downloadUrl)}" alt="Student uploaded appreciation" />`;
   }
   return "";
+}
+
+function getPublicStoryMediaLabel(submission) {
+  const type = submission.video?.type || "";
+  if (type.startsWith("video/")) return "VIDEO";
+  if (type.startsWith("image/")) return "IMAGE";
+  return "TEXT";
 }
 
 function buildPublicStoryPreview(story) {
@@ -1373,18 +1380,20 @@ els.form.addEventListener("submit", async (event) => {
   };
 
   let savedSubmission = submission;
-  try {
-    savedSubmission = {
-      ...(await uploadSubmissionToDrive(submission)),
-      driveStatus: "Pending review",
-    };
-    els.formNote.innerHTML = `<span class="success">Submitted and synced to Drive.</span>`;
-  } catch (error) {
-    savedSubmission = {
-      ...submission,
-      driveStatus: "Pending review",
-    };
-    els.formNote.textContent = "Submitted for review, but Drive sync failed. Please check the endpoint.";
+  if (!serverMode) {
+    try {
+      savedSubmission = {
+        ...(await uploadSubmissionToDrive(submission)),
+        driveStatus: "Pending review",
+      };
+      els.formNote.innerHTML = `<span class="success">Submitted and synced to Drive.</span>`;
+    } catch (error) {
+      savedSubmission = {
+        ...submission,
+        driveStatus: "Pending review",
+      };
+      els.formNote.textContent = "Submitted for review, but Drive sync failed. Please check the endpoint.";
+    }
   }
 
   try {
