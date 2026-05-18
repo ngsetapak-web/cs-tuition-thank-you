@@ -638,19 +638,64 @@ function renderPublicStoryMedia(submission) {
 
 function buildPublicStoryPreview(story) {
   const sections = parseStorySections(story);
-  const storyParts = [
-    sections["Before meeting this teacher"] ? `Before meeting this teacher, ${sections["Before meeting this teacher"]}` : "",
-    sections["Impact moment"] || "",
-    sections["What changed after that"] ? `After that, ${sections["What changed after that"]}` : "",
-    sections["Message to teacher"] || "",
-    sections["Achievement before and after"] ? `Achievement: ${sections["Achievement before and after"]}` : "",
-  ].filter(Boolean);
+  const before = cleanStoryPart(sections["Before meeting this teacher"]);
+  const impact = cleanStoryPart(sections["Impact moment"]);
+  const changed = cleanStoryPart(sections["What changed after that"]);
+  const message = cleanStoryPart(sections["Message to teacher"]);
+  const achievement = cleanStoryPart(sections["Achievement before and after"]);
+  const parts = [before, impact, changed, message, achievement].filter(Boolean);
 
-  if (storyParts.length) {
-    return shortStoryPreview(storyParts.join(" "));
+  if (parts.length) {
+    const isChineseStory = hasChineseText(parts.join(""));
+    const storyPreview = isChineseStory
+      ? buildChineseStoryPreview({ before, impact, changed, message, achievement })
+      : buildEnglishStoryPreview({ before, impact, changed, message, achievement });
+    return shortStoryPreview(storyPreview);
   }
 
   return shortStoryPreview(story);
+}
+
+function buildChineseStoryPreview({ before, impact, changed, message, achievement }) {
+  return [
+    before ? `以前，${withChinesePeriod(before)}` : "",
+    impact ? `${withChinesePeriod(impact)}` : "",
+    changed ? `后来，${withChinesePeriod(changed)}` : "",
+    message ? `${withChinesePeriod(message)}` : "",
+    achievement ? `进步成果：${withChinesePeriod(achievement)}` : "",
+  ].filter(Boolean).join("");
+}
+
+function buildEnglishStoryPreview({ before, impact, changed, message, achievement }) {
+  return [
+    before ? `Before meeting this teacher, ${withEnglishPeriod(before)}` : "",
+    impact ? `The moment I remember most is ${lowercaseFirst(withEnglishPeriod(impact))}` : "",
+    changed ? `After that, ${lowercaseFirst(withEnglishPeriod(changed))}` : "",
+    message ? withEnglishPeriod(message) : "",
+    achievement ? `Achievement: ${withEnglishPeriod(achievement)}` : "",
+  ].filter(Boolean).join(" ");
+}
+
+function cleanStoryPart(value) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function hasChineseText(value) {
+  return /[\u3400-\u9fff]/.test(value);
+}
+
+function withChinesePeriod(value) {
+  const text = cleanStoryPart(value);
+  return /[。！？!?]$/.test(text) ? text : `${text}。`;
+}
+
+function withEnglishPeriod(value) {
+  const text = cleanStoryPart(value);
+  return /[.!?]$/.test(text) ? text : `${text}.`;
+}
+
+function lowercaseFirst(value) {
+  return value.replace(/^([A-Z])/, (letter) => letter.toLowerCase());
 }
 
 function shortStoryPreview(story) {
